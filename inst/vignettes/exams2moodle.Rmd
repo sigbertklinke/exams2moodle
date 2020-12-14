@@ -1,0 +1,134 @@
+---
+title: "exams2moodle"
+author: 
+- name: "Sigbert Klinke" 
+  email: sigbert@hu-berlin.de
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    toc: true
+vignette: > 
+  %\VignetteIndexEntry{exams2moodle} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  \usepackage[utf8]{inputenc} 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Note**: Part the text is taken from the [Moodle](https://moodle.org/) website, the [`exams`](https://CRAN.R-project.org/package=exams) package and the [R/exams](http://www.r-exams.org/) web site. From my point of view there is no need to reinvent the wheel (or text).
+
+Moodle is a learning platform designed to provide educators, administrators and learners with a single robust, secure and integrated system to create personalised learning environments. Part of Moodle is an activity Quiz which allows a the teacher to design and set quizzes consisting of a large variety of Question types. The questions are stored in a  Question bank and can be reused in different quizzes. 
+
+The `exams` package in R allows the automatic generation of exams based on exercises in Markdown or LaTeX format, possibly including R code for dynamic generation of exercise elements. Exercise types include single-choice and multiple-choice questions, arithmetic problems, string questions, and combinations thereof (cloze). Output formats include standalone files (PDF, HTML, Docx, ODT, ...), **Moodle XML**, QTI 1.2, QTI 2.1, Blackboard, Canvas, OpenOLAT, ARSnova, and TCExam. 
+
+Due to Corona I, as statistics teacher, was forced to create online exams. It was a natural way for me to create exercises with R Sweave (or R Markdown) for the Question bank in Moodle. But an online exam is in various ways different to a written exam. Since I'am more familiar with R then with Moodle I decided to create with the `exams` package dynamic questions, create `n` replicates using different numbers and upload the questions into Moodle.
+
+To create exercises I use several steps:
+
+* `exams2pdf(exercisename, nsamp=10)` to create **one** PDF file to check for possible problems in the questions or solutions,
+* `stress_test(exercisename)` to see if any problems appear with the questions and to get an idea of the distribution of the correct answers, and 
+* `exams2moodle(exercisename, n=10)` to create a Moodle XML file, here with ten replications. 
+
+The difference of using either `n` or `nsamp` are of practical nature:
+
+* In `exams2pdf` using `n=10` creates ten PDF files, one for each question,  whereas `nsamp=10` creates one PDF file with all questions.
+* In `exams2moodle` using `n=10` creates one category with ten questions, whereas `nsamp=10` creates ten categories containing one question. Whenever you have to delete categories and questions in the question bank in Moodle then you will note the difference :)
+
+## Question types
+
+The `exams` package supports the following answer types for a question:
+
+| `exams`              | Moodle          |
+|----------------------|-----------------| 
+| `mchoice`            | Multiple choice (multiple answers possible) | 
+| `schoice`            | Multiple choice (only one answer possible)  | 
+| `num`                | Numerical                                   | 
+| `string`             | Short Answer                                |
+| `essay`              | Essay                                       |
+| `cloze`              | Embedded Answers (Cloze Test / Gap Fill)    |
+
+Other Moodle answer types are not (yet?) supported: 
+
+* Calculated ...
+* Drag and drop ...
+* Description
+* (Random short-answer) Matching
+* Select missing words 
+
+Other could be emulated:
+
+* True/False (`cloze` and `schoice`)
+
+### Essay
+
+```{r, eval=FALSE}
+%% \extype{string}
+%% \exsolution{nil}
+%% \exextra[essay,logical]{TRUE}
+%% \exextra[essay_format,character]{editor}
+%% \exextra[essay_required,logical]{FALSE}
+%% \exextra[essay_fieldlines,numeric]{5}
+%% \exextra[essay_attachments,numeric]{1}
+%% \exextra[essay_attachmentsrequired,logical]{FALSE}
+%% \exmaxchars{1000, 10, 50}
+```
+
+## Frequently asked questions
+
+### How can I force a block of LaTeX to become an image in Moodle?
+
+Source: https://stackoverflow.com/questions/62222053/different-copies-of-question-with-table-for-moodle-with-r-exams
+
+Use the command `tex2image` from the `exams` package:
+
+```{r, eval=FALSE}
+<<echo=FALSE, results=hide>>=
+tab <- '\\begin{tabular}{lrr}
+\\hline
+Name & Min & Max \\\\
+\\hline
+Foo  & 0   & 1   \\\\
+Bar  & 0   & 100 \\\\
+\\hline
+\\end{tabular}'
+tex2image(tab, name = "tab", dir = ".", pt = 8, resize = 250)
+@
+\includegraphics{tab.png}
+```
+
+## Exercise types in `exams` and `Moodle`
+
+```{r, echo=FALSE}
+library("exams")
+exerdir   <- paste0(system.file(package="exams"), "/exercises")
+exerfiles <- list.files(path=exerdir, pattern="*.Rnw$")
+extype    <- rep('', length(exerfiles))
+for (i in seq(exerfiles)) {
+  fcont     <- readLines(paste0(exerdir, '/', exerfiles[i]))
+  extype[i] <- fcont[grepl("\\extype", fcont, fixed=TRUE)]
+}
+extype <- gsub('[ \\{\\}%]', '', extype)
+extype <- gsub('extype', '', extype, fixed=TRUE)
+#
+tdir <- tempdir(TRUE)
+res  <- exams2moodle(exerfiles, n=1, edir=exerdir, tdir=tdir, 
+                     name='rexams', schoice = list(eval = exams_eval(rule = "none")))
+library("XML")
+xmlfile <- xmlParse("rexams.xml")
+xmltop  <- xmlRoot(xmlfile)
+xmlquestion <- xmlSApply(xmltop, xmlAttrs)
+xmlquestion <- xmlquestion[xmlquestion!='category']
+#
+df <- data.frame(Example_exercise          = sapply(res[[1]], function(e) { e$metainfo$file}),
+                 Exercise_type = extype,
+                 Cloze_type    = sapply(res[[1]], function(e) { if (is.null(e$metainfo$clozetype)) return('');
+                                                               return(paste0(e$metainfo$clozetype, collapse="|"))}),
+                 Moodle_type   = xmlquestion,
+                 stringsAsFactors = FALSE)
+row.names(df) <- NULL
+df <- df[order(df$Exercise_type, df$Moodle_type),]
+library("knitr")
+kable(df, row.names=FALSE)
+```

@@ -1,0 +1,11 @@
+### {{name}}
+
+#### Frage
+
+{{questiontext}}
+
+{{answer}}
+
+#### Richtige Lösung
+
+{{generalfeedback}}

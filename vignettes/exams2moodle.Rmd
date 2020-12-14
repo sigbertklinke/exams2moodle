@@ -1,0 +1,133 @@
+---
+title: "exams2moodle"
+author: "Sigbert Klinke"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{exams2moodle}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, echo=FALSE}
+library("exams2moodle")
+```
+
+## Data generation
+
+### `add_data`
+
+`add_data` adds data point(s) to the left and/or the right of a given data vector `x`.
+
+1. A box and its width is determined by
+    *  `box="range"` gives a box width of `width=max(x)-min(x)` and two points `xleft=min(x)` and  `xright=max(x)`
+    * `box="box"` gives a box width of `width=IQR(x)` and two points `xleft=quantile(x, 0.25)` and  `xright=quantile(x, 0.75)`
+    * `box=c(xleft, xright)` gives a box width of `width=xright-xleft` and two points `xleft` and  `xright`
+2. The numbers of additional data points is determined by `n`
+    * `n=c(nleft, nright)` gives the number of points to generate at the left and right
+    * `n=1` is a short form of `c(0,1)` (the default)
+3. Within the interval [`xleft-range[2]*width`; `xleft-range[1]*width`] are `nleft` points uniformly drawn and within the interval [`xright+range[1]*width`; `xright+rang[2]*width`] are `nleft` points uniformly drawn (both intervals are colored in red)
+
+```{r, echo=FALSE, fig.width=6, fig.height=3}
+par(mar=c(0,0,0,0))
+plot(c(0, 1), c(0.15,1.15), axes=FALSE, type="n", xlab="", ylab="")
+rect(0.25, 0.25, 0.75, 0.75)
+text(0.25, 0.25, labels="xleft", pos=1)
+text(0.75, 0.25, labels="xright", pos=1)
+text(0.5, 0.75, labels="width", pos=3)
+arrows(0.25, 0.8, 0.75, 0.8, code=3, length=0.1)
+arrows(0.0, 0.5, 0.2, 0.5, code=3, col="red", length=0.1)
+arrows(0.8, 0.5, 1.0, 0.5, code=3, col="red", length=0.1)
+text(0.8, 0.8, "xright+range[1]*width", col="red", srt=90)
+text(1, 0.8, "xright+range[2]*width", col="red", srt=90)
+text(0, 0.8, "xleft-range[2]*width", col="red", srt=90)
+text(0.2, 0.8, "xleft-range[1]*width", col="red", srt=90)
+```
+
+```{r}
+x <- runif(7, 165, 195)
+xr <- add_data(x, "range", n=c(0,1), range=c(1,1.5)) 
+round(xr)
+xb <- add_data(x, "box", n=c(0,1), range=c(1,1.5)) 
+round(xb)
+x1 <- add_data(x, box=c(165,195), n=c(0,1), range=c(1,1.5)) 
+round(x1)
+```
+
+### `means`
+
+`means` computes a list of mean values for a given data vector `x`:
+
+* arithmetic mean,
+* median,
+* harmonic mean,
+* geometric mean,
+* (first) mode,
+* trimmed mean, and
+* winsorized mean.
+
+If the parameter `trim` and/or `winsor` set to `NA` then these means will not be computed.
+
+```{r}
+x <- runif(7, 165, 195)
+str(means(x, 2))
+```
+
+The attribute `mindiff` gives the minimal distance between two mean values. 
+
+## Accessing and modifying the XML file
+
+## Recreate exercises in readable form
+
+### Individual exercises and answers from a JSON file
+
+1. Go into Moodle to the test, choose 'Options' -> 'Assessment' -> 'Detailed answers'
+2. Download the reports of the students in JSON format. __Note:__ Images will be not downloaded from Moodle, only the text of the `alt` attribute is shown!
+3. Start R and type
+
+```{r}
+library("exams2moodle")
+# replace the next line with
+# file <- "location_of_your_downloaded_JSON_file"
+file <- system.file("json", "Test-Klausur-Statistik.json", package="exams2moodle")
+# this will create in the directory with your JSON file a PDF file
+json2report(file)
+```
+
+Named parameters which can be used:
+
+* `template`: a template RMarkdown file. If none given then the default file `system.file("templates", "hu-german.Rmd", package="exams2moodle")` will be used.
+* `author`: an author name, default `""`.
+* `title`: a report title. If none given then the base name of the JSON file is used.
+* `pdf_param`: a list of parameters given to `rmarkdown::pdf_document()`.
+
+In case that you develop your own templates you may have further parameters which you might want to replace in the template. For example if you use a named parameter `subtitle` then all `{{subtitle}}` will be replaced in the template file by the content of the parameter `subtitle`.
+
+
+## Templates
+
+### `hu_german.Rmd`
+
+Access the template with `system.file("templates", "hu_german.Rmd", package="exams2moodle")`.
+Note that the real work is done within the template, not in the `json2report` function.
+
+```{r, echo=FALSE, comment=NA}
+cat(paste0(readLines(system.file('template', 'hu_german.Rmd', package='exams2moodle')), collapse="\n"))
+```
+
+### `question_german.Rmd`
+
+Access the template with `system.file("templates", "question_german.Rmd", package="exams2moodle")`.
+
+```{r, echo=FALSE, comment=NA}
+cat(paste0(readLines(system.file('template', 'question_german.Rmd', package='exams2moodle')), collapse="\n"))
+```
