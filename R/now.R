@@ -13,7 +13,11 @@
 #' now(3)  # return only the first three digits
 now <- function(last=35) {
   t1 <- gsub('.', '', sprintf("%.20f", as.numeric(Sys.time())), fixed=TRUE)
-  t2 <- gsub('.', '', sprintf("%.20f", as.numeric(Sys.time())), fixed=TRUE)
-  stopifnot(t1!=t2)
+  i  <- .Machine$integer.max
+  repeat{
+    i  <- i-1
+    t2 <- gsub('.', '', sprintf("%.20f", as.numeric(Sys.time())), fixed=TRUE)
+    if(t1!=t2) break;
+  }
   substr(t2, 1, last)
 }

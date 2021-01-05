@@ -23,6 +23,28 @@ toRMarkdown <- function(txt) {
   txt <- gsub("\\b\\_(.*?)\\_\\b", "\\*\\1\\*", txt)
   txt <- gsub("\\n: ", "\n\n* ", txt)
   txt <- gsub("\\n; ", "\n* ", txt)
-  txt <- gsub("\\n\\t\\* ", "\n* ", txt)
-  txt
+  # find tables
+  txt <- gsub("\\n\\t\\t", "\\|@\\|", txt)
+  txt    <- strsplit(txt, "\n")[[1]]
+  alphas <- strsplit(txt, "\\|@\\|")
+  nalpha <- lengths(alphas)
+  header <- 0
+  for (i in 1:length(nalpha)) {
+    if (nalpha[i]>1) {
+      if (header!=nalpha[i]) {
+        alphas[[i]][1] <- paste0("\n", 
+                                 paste0(rep("| ", nalpha[i]-1), collapse=""), "|\n",
+                                 paste0(rep("|-:", nalpha[i]-1), collapse=""), "|\n")
+        alphas[[i]] <- paste0(paste0(alphas[[i]], collapse="|"), "|")
+        header <- nalpha[i]
+      } else {
+        alphas[[i]] <- paste0(paste0(alphas[[i]], collapse="|"), "|")
+      }
+    } else {
+      if (nalpha[i]==0) alphas[[i]] <- ''
+      header <- 0
+    }
+  }
+#  txt <- gsub("\\n\\t\\* ", "\n* ", txt)
+  paste0(unlist(alphas), collapse="\n")
 }

@@ -33,7 +33,7 @@ html_matrix(
 Plain text, HTML or MediaWiki code
 }
 \description{
-Returns a HTML representation of a matrix with the following parameters and defaults:
+Returns a HTML representation of a matrix with the following parameters and defaults (Note that recycling can used with most parameters):
 \describe{
 \item{\code{title}}{entry at the top left (default: \code{""})}
 \item{\code{caption}}{entry for the caption (default: \code{""})}
