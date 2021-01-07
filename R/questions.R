@@ -26,11 +26,11 @@ questions <- function(html, template=NULL, yaml=NULL, nowlen=4) {
   replace_amp_in_math <- function(html) {
     math_mode <- str_match_all(html, regex('<span class="math display".*?\\[.*?\\]<\\/span>', dotall=TRUE))[[1]]
     if (length(math_mode)) {
-      browser()
+      # browser()
       math_repl <- gsub("&amp;", "&", math_mode, fixed = TRUE)
       for (i in 1:length(math_mode)) html <- gsub(math_mode[i], math_repl[i], html, fixed=TRUE)
     }
-    browser()
+    # browser()
     html
   }
   #
@@ -67,7 +67,7 @@ questions <- function(html, template=NULL, yaml=NULL, nowlen=4) {
           lend   <- '</ol>'
           answer <- sprintf("<ol type=\"%s\">", substr(html[[i]]$answernumbering, 1, 1))
         }
-        browser()
+        # browser()
         fraction <- if(is.null(dim(html[[i]]$answer_attr))) html[[i]]$answer_attr['fraction'] else html[[i]]$answer_attr[,'fraction']
         answer <- c(answer, paste0('<li>', html[[i]]$answer, ' <b>(', unquote(fraction), ')</b> ', "</li>"))
         answer <- c(answer, lend)

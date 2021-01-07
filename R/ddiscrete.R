@@ -30,6 +30,6 @@ ddiscrete <- function(x, unit=NULL, zero=FALSE) {
       fx[i] <- fx[i]+1
     }
   }
-  fx/unit
+  structure(fx/unit, unit=unit)
 }
 

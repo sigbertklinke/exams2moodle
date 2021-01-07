@@ -2,27 +2,65 @@
 % Please edit documentation in R/ddiscrete2.R
 \name{ddiscrete2}
 \alias{ddiscrete2}
-\title{ddiscrete}
+\title{ddiscrete2}
 \usage{
-ddiscrete2(n, unit = NULL, zero = FALSE)
+ddiscrete2(
+  row,
+  col,
+  unit = NULL,
+  zero = FALSE,
+  FUN = nom.cc,
+  target = NA,
+  tol = 0.001,
+  maxit = 500,
+  ...
+)
 }
 \arguments{
-\item{n}{numeric(2): rows and columns of the joint probability}
+\item{row}{numeric: marginal row distribution}
+
+\item{col}{numeric: marginal col distribution}
 
 \item{unit}{integer: reciprocal of smallest non-zero probability (default: \code{NULL})}
 
 \item{zero}{logical: zeros in the final probabilities allowed (default: \code{FALSE})}
+
+\item{FUN}{function: association or correlation function (default: \code{nom.cc})}
+
+\item{target}{numeric: target association or correlation (default: \code{NA})}
+
+\item{tol}{numeric: tolerance for target association or correlation (default: \code{0.001})}
+
+\item{maxit}{integer: maximal number of iterations (default: \code{100})}
+
+\item{...}{further parameter for \code{FUN}}
 }
 \value{
 a discrete probability function
 }
 \description{
-Creates a bivariate discrete probability function based on \code{x} with resolution \code{unit}. 
-If \code{unit} is not given then unit will be 10, 100, 1000, ... depending on the length of 
-the discrete probability function.
+Creates a bivariate discrete probability function based on the marginal probability fuctions 
+\code{row} and \code{col}. If \code{unit} is not given then unit will be the product of the units
+used in \code{row} and \code{col} otherwise the least common multiple of \code{unit} product of 
+the units used in \code{row} and \code{col}. \code{zero} allows for zero entries in the common
+distribution.
+If \code{target} is \code{NA} then the common distribution of two independent random variables
+is returned otherwise an iterative algorithm is run to approach a \code{target} association or 
+correlation measure. \code{FUN} computes the association or correlation measure based on a
+frequency table. \code{tol} gives the maximal deviation of the association or correlation measure
+and the \code{target} value. \code{maxit} limits the number of steps.
+Note that a solution is not guaranteed, especially for extreme values for \code{target}, for example
+for +1 or -1 or values nearby.
+If \code{attr(joint, "iterations")==maxit} then you need 
+either to increase \code{maxit}, to decrease \code{tol} or to check if you have choosen an 
+appropriate \code{target} value (for a nominal measure in [0,1], for ordinal measure in [-1, 1]).
 }
 \examples{
-ddiscrete2(c(2,3))
-ddiscrete2(c(2,3), unit=100)
-ddiscrete2(c(2,3), unit=10, zero=TRUE)
+row <- ddiscrete(runif(5))
+col <- ddiscrete(runif(3))
+joint <- ddiscrete2(row, col)
+joint
+joint <- ddiscrete2(row, col, target=0.5)
+joint
+nom.cc(joint*attr(joint, "unit"))
 }
