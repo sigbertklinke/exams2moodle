@@ -44,3 +44,8 @@ unquote  <- function(txt) { unaffix(txt, '"', '"') }
 #' @description \code{uncdata} deletes a \code{<![CDATA[} as prefix and \code{]]>} as suffix
 #' @export  
 uncdata  <- function(txt) { unaffix(txt, '<![CDATA[', ']]>') }
+
+#' @rdname affix
+#' @description \code{cdata} adds a \code{<![CDATA[} as prefix and \code{]]>} as suffix
+#' @export  
+cdata  <- function(txt) { affix(txt, '<![CDATA[', ']]>') }

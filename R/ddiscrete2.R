@@ -64,6 +64,7 @@ ddiscrete2 <- function(row, col, unit=NULL, zero=FALSE, FUN=nom.cc, target=NA, t
   unit <- lcm(c(unit, rowunit*colunit))
   fx   <- matrix(as.integer(unit*(row %o% col)), ncol=length(col), nrow=length(row))
   it   <- 0
+  curr <- 0
   if (!is.na(target)) {
     # browser()
     fun  <- match.fun(FUN)
@@ -92,5 +93,5 @@ ddiscrete2 <- function(row, col, unit=NULL, zero=FALSE, FUN=nom.cc, target=NA, t
       }
     }
   }
-  structure(fx/unit, unit=unit, iterations=it)
+  structure(fx/unit, unit=unit, iterations=it, target=curr)
 }

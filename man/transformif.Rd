@@ -9,7 +9,7 @@ transformif(x, cond, a = -abs(min(x)), b = 1, p = 1)
 \arguments{
 \item{x}{vector: values}
 
-\item{cond}{logical: condition if transformation shoudl be applied}
+\item{cond}{logical: condition if transformation should be applied}
 
 \item{a}{numeric: shift (default: \code{-abs(min(x))})}
 
@@ -21,7 +21,7 @@ transformif(x, cond, a = -abs(min(x)), b = 1, p = 1)
 transformed vector
 }
 \description{
-Transforms \code{x} if \code{cond} is \code{TRUE} by \eqn{\log(a+b*x)} if \code{p==0} and \eqn{(a+b*x)^p)} otherweise.
+Transforms \code{x} if \code{cond} is \code{TRUE} by \eqn{\log(a+b*x)} if \code{p==0} and \eqn{(a+b*x)^p)} otherwise.
 The transformation can be either applied to each element of \code{x} or to all elements of \code{x}.
 }
 \examples{

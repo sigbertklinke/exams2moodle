@@ -63,9 +63,95 @@ x1 <- add_data(x, box=c(165,195), n=c(0,1), range=c(1,1.5))
 round(x1)
 ```
 
-### `means`
+### `scale_to`
 
-`means` computes a list of mean values for a given data vector `x`:
+Given a numeric vector it uses a linear transformation to rescale the data to a given mean and standard deviation. The defult is to standardize the data
+
+```{r}
+x <- runif(30)
+mean(x)
+sd(x)
+#
+y <- scale_to(x, mean=2, sd=0.5)
+mean(y)
+sd(y)
+```
+
+### `ddiscrete`
+
+`ddiscrete` generates a finite one-dimensional discrete probability distribution. If the length of `x` is one 
+then `x` is the number of elements. Otherwise `x` is considered as a starting distribution and length of `x` is the number of elements.
+
+The parameter `zero` determines if the final distribution can contain the probability entry zero or not. Since for computation of exercises
+based on a one-dimensional discrete probability distribution it favorably that the entries are fractions have the same denominator the paramter
+`unit` can be used for this. Thus, if the smallest non-zero denominator should be `1/7` then use `unit=7`; the default is a power of 10.
+
+```{r}
+ddiscrete(6) # fair dice
+x <- runif(6)
+ddiscrete(x)
+ddiscrete(x, zero=TRUE)
+ddiscrete(x, unit=15)
+fractions(ddiscrete(x, unit=15))
+```
+
+### `ddiscrete2`
+
+`ddiscrete2` generates a finite two-dimensional discrete probability distribution. The generation needs two steps:
+
+1. Generate two marginal finite two-dimensional discrete probability distributions. Based on this a joint probability for two 
+independent distributions is generated.
+2. Define target measure for association and target value for the association for the joint distribution.
+
+The current available association measure are:
+
+* `nom.cc` (corrected) contingency coefficent
+* `nom.cramer` Cramer's V or Phi
+* `ord.spearman` Spearman's rank correlation
+* `ord.kendall` Kendall's rank correlation
+
+```{r}
+r <- ddiscrete(6)
+c <- ddiscrete(6)
+ddiscrete2(r, c)
+ddiscrete2(r, c, FUN=nom.cc, target=0.4)
+ddiscrete2(r, c, FUN=nom.cc, target=1)
+```
+
+The units are determined as units of `r` multiplied with the units of `c`. Since a iterative process is used the parameter `maxit`is set to 500.
+If the attribute `iterations` is equal to `maxit` then the iterative process has not been finished. The attribute `target` gives the asscociation value obtained.
+
+
+### `distribution`
+
+An object of class `distribution` holds a distribution (of a random variable). It is specified by a name and the distribution values. The name is used create quantile (`paste0("q", name)`) and cumulative distribution functions (`paste0("p", name)`), for example
+
+* `binom` hypergeometric distribution with parameters: `size`, `prob`
+* `hyper` hypergeometric distribution with parameters: `m`, `n`, `k`
+* `geom` geometric distribution with parameter: `prob`
+* `pois` Poisson distribution with parameter: `lambda`
+* `unif` hypergeometric distribution with parameters: `min`, `max`
+* `exp`: exponential distribution with parameter: `rate`
+* `norm`: normal distribution with parameters: `mean`, `sd`
+* `lnorm`: log-normal distribution with parameters: `meanlog`, `sdlog`
+* `t`: Student t distribution with parameter: `df`
+* `chisq`: chi-squared distribution with parameter: `df`
+* `f`: F distribution with parameters: `df1`,  `df2`
+
+The names of the above distributions can be abbreviated, for all other the exact name must be given.
+
+```{r}
+d <- distribution("t", df=15)
+quantile(d, c(0.025, 0.975))
+d <- distribution("norm", mean=0, sd=1)
+cdf(d, c(-1.96, +1.96))
+```
+
+## Statistics helper
+
+### `means_choice`
+
+`means_choice` computes a list of mean values for a given data vector `x`:
 
 * arithmetic mean,
 * median,
@@ -78,17 +164,136 @@ round(x1)
 If the parameter `trim` and/or `winsor` set to `NA` then these means will not be computed.
 
 ```{r}
-x <- runif(7, 165, 195)
-str(means(x, 2))
+x <- runif(7, min=165, max=195)
+str(means_choice(x, 2))
 ```
 
 The attribute `mindiff` gives the minimal distance between two mean values. 
 
+### `combinatorics`
+
+Computes all results for permutation, variation and combination with and without reptition.
+
+```{r}
+combinatorics(7, 3)
+```
+
+The attribute `mindiff` gives the minimal distance between two values. 
+
+## General helper 
+
+### `all_different`
+
+For solutions in multiple choice exercises you want to ensure that the numerical results are not too near to each other. 
+Therefore,  `all_different` checks if the differences between the entries in `obj` are larger than some given value `tol`.
+
+```{r}
+x <- runif(20)
+all_different(x, 1)    # minimal distance is at least 1
+all_different(x, 1e-4) # minimal distance is at least 0.0001
+```
+
+
+### `equal`
+
+Compares two numeric values if they are equal given a tolerance (default: 1e-6) by `abs(x-y)<tol)`.
+
+```{r}
+x <- pi
+y <- pi+1e-4
+equal(x, y)
+equal(x, y, tol=1e-3)
+```
+
+### `firstmatch`
+
+`firstmatch` seeks matches for the elements of its first argument among those of its second. If multiple matches are found then
+the first match is returned, for further details see `charmatch`.
+
+```{r}
+firstmatch("d", c("chisq", "cauchy"))
+firstmatch("c", c("chisq", "cauchy"))
+firstmatch("ca", c("chisq", "cauchy"))
+```
+
+
+### `fractions`
+
+`fractions` is a copy of `MASS::fractions` to compute from a numeric values fractions. 
+
+```{r}
+d <- ddiscrete(6)
+fractions(d)
+```
+
+### `pintegrate`
+
+`pintegrate` integrates about a finite interval a polynomial fucntion mtuiplied with a power. Assume a density is defined as
+
+$f(x) = \begin{cases} (c_q x^q + c_{q-1} x^{q-1} + \ldots + c_0) x^p dx & \text{ for } a\leq x\leq b\\
+                        0                                                & \text{ otherwise}\end{cases}$
+
+An example:
+
+```{r}
+# f(x)= x^2/4+x/6+10/12 for 0 <= x <= 1, 
+#              0        otherwise
+coeff <- c(1/4,1/6,10/12)
+res   <- pintegrate(coeff, c(0, 1), 0:2)
+# Is density?
+equal(res[1], 1)
+# expectation
+res[2]
+# variance
+res[3]-res[2]^2
+```
+
+
+
 ## Accessing and modifying the XML file
 
-## Recreate exercises in readable form
+If you considering multple-choice questions then `exams2` package distinguishes between
 
-### Individual exercises and answers from a JSON file
+* `mchoice`: several correct answers with negative values for wrong answers, and
+* `schoice`: one correct answer.
+
+That for `mchoice` you get negative values for wrong answers is due to the fact that students should not get points
+if they just check all answers. However, if the student just checks wrong answers then he gets negative values for the exercise.
+Moodle would add the negative point to the whole exam. But in my place a student is not allowed to receive negative points for an exercise,
+the minimum is zero points.
+
+But Moodle supports another type of questions: several correct answers, but the student can choose just one answer. Unfortunately the 
+`exams2` package does not support this. So I decided to manipulate the XML file that `exams2moodle` generates with `moodle_m2s`.
+
+### `moodle_m2s`
+
+Create your exercise as normal `mchoice` exercise and create with `exams2moodle` the XML fiel for Moodle. 
+Then apply `moodle_m2s`to the XML file.
+
+```{r, eval=FALSE}
+exams2moodle(mymchoiceexer, name="mchoiceexer")
+moodle_m2s("mchoiceexer.xml", "mschoiceexer.xml") # write new XML file to mschoiceexer.xml
+moodle_m2s("mchoiceexer.xml")                     # overwrite mchoiceexer.xml with new XML code
+```
+
+`moodle_m2s` reads in the XML file and writes it back after:
+
+1. Changing every `<single>false</single>` to `<single>true</single>` and
+2. Setting positive fractions to `fraction="100"` and negativef ractions to `fraction="0"`.
+
+### Further XML commands
+
+* `moodle_xml2list` reads in a Moodle XML file and stores it in a list
+* `moodle_list2xml` writes a list from `moodle_xml2list` to a Moodle XML file
+* `moodle_fraction` allows to read and modify the fractions from all exercises
+* `moodle_fractions` returns a vector of all fractions which can be used in Moodle exercises
+* `moodle_text` allows to read and modify some `<text>...</text>` elements from exercises
+
+```{r}
+moodle_fractions()
+```
+
+## Recreate exercises in readable form from a JSON file
 
 1. Go into Moodle to the test, choose 'Options' -> 'Assessment' -> 'Detailed answers'
 2. Download the reports of the students in JSON format. __Note:__ Images will be not downloaded from Moodle, only the text of the `alt` attribute is shown!
@@ -111,7 +316,6 @@ Named parameters which can be used:
 * `pdf_param`: a list of parameters given to `rmarkdown::pdf_document()`.
 
 In case that you develop your own templates you may have further parameters which you might want to replace in the template. For example if you use a named parameter `subtitle` then all `{{subtitle}}` will be replaced in the template file by the content of the parameter `subtitle`.
-
 
 ## Templates
 

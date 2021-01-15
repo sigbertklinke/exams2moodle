@@ -4,18 +4,18 @@
 \alias{all_different}
 \title{all_different}
 \usage{
-all_different(obj, mind)
+all_different(obj, tol)
 }
 \arguments{
 \item{obj}{object: numeric R object which can be converted to a vector}
 
-\item{mind}{numeric: minimum value}
+\item{tol}{numeric: minimum value}
 }
 \value{
 logical
 }
 \description{
-Test if the differences between the entries in \code{obj} is larger than \code{mind}.
+Test if the differences between the entries in \code{obj} is larger than \code{tol}.
 }
 \examples{
 x <- runif(10)

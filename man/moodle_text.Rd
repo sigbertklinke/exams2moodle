@@ -4,10 +4,12 @@
 \alias{moodle_text}
 \title{moodle_text}
 \usage{
-moodle_text(xml)
+moodle_text(xml, newtext = NULL)
 }
 \arguments{
 \item{xml}{list: a list with XML tags and bodys}
+
+\item{newtext}{list: modified list with questions, feedbacks and further informations (default: \code{NULL})}
 }
 \value{
 list with questions, feedbacks and further informations

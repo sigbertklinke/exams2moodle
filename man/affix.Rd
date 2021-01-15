@@ -6,6 +6,7 @@
 \alias{unaffix}
 \alias{unquote}
 \alias{uncdata}
+\alias{cdata}
 \title{affix}
 \usage{
 affix(txt, prefix = "", suffix = "")
@@ -17,6 +18,8 @@ unaffix(txt, prefix = "", suffix = "")
 unquote(txt)
 
 uncdata(txt)
+
+cdata(txt)
 }
 \arguments{
 \item{txt}{vector: (character) vector to add a prefix and/or suffix}
@@ -38,6 +41,8 @@ character vector
 \code{unquote} deletes double quotes as prefix and suffix
 
 \code{uncdata} deletes a \code{<![CDATA[} as prefix and \code{]]>} as suffix
+
+\code{cdata} adds a \code{<![CDATA[} as prefix and \code{]]>} as suffix
 }
 \examples{
 x <- runif(5)
