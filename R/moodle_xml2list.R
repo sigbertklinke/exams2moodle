@@ -68,7 +68,7 @@ moodle_xml2list <- function(file, quiet=TRUE) {
   res  <- str_locate_all(xml, '<.*?>')[[1]]
   tags <- str_sub(xml, res[,1], res[,2])
   validtag   <- str_detect(tags, "^<[/?a-zA_Z][a-zA-Z0-9]*" )
-  htmltag    <- str_detect(tags, "^</*(table|thead|tbody|strong|code|span|img|pre|div|ul|ol|li|em|td|th|tr|a|p|i)[^a-zA-Z]") | str_detect(tags, '/>$')
+  htmltag    <- str_detect(tags, "^</*(style|table|thead|tbody|strong|code|span|img|pre|div|ul|ol|li|em|td|th|tr|a|p|i)[^a-zA-Z]") | str_detect(tags, '/>$')
   invalidtag <- which(!validtag | htmltag)
   if (length(invalidtag)) {
     res  <- res[-invalidtag,]
