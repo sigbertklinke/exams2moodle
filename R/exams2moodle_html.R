@@ -1,4 +1,4 @@
-#' exam2moodle_html
+#' exams2moodle_html
 #'
 #' Creates a HTML page with all list elements which names match \code{pattern}. Default is to match all list elements. 
 #' If \code{html} is \code{NULL} then no file will be written; just the name of matched list elements will be returned invisibly.
@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' x <- 1
-exam2moodle_html <- function(exam, html=NULL, pattern=".") { 
+exams2moodle_html <- function(exam, html=NULL, pattern=".") { 
   lst  <- unlist(exam)
   nlst <- names(lst)
   elem <- grepl(pattern, nlst)
