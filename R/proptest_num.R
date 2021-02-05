@@ -30,13 +30,10 @@
 #' @export
 #' @md
 #' @examples
-#' x <- runif(100)
-#' ttest_num(x=x)
-#' ttest_num(mean=mean(x), sd=sd(x), n=length(x))
-#' ret <- ttest_num(x=x)
-#' ret$alternative <- "less"
-#' ttest_num(arglist=ret)
-proptest_num<- function(..., arglist=NULL) {
+#' n <- 100
+#' x <- sum(runif(n)<0.4)
+#' proptest_num(x=x, n=n)
+proptest_num <- function(..., arglist=NULL) {
   ret  <- list(pi0=0.5, x=NA, n=NA_integer_, alternative="two.sided",
                X=NA, Statistic=NA, statistic=NA, p.value=NA, stderr=NA, 
                binom2norm=NA, alphaexact=NA, alpha=0.05,
@@ -81,18 +78,16 @@ proptest_num<- function(..., arglist=NULL) {
     ret$Statistic <- ret$X
     ret$statistic <- ret$x
     cdf           <- cdf(ret$Statistic, 0:ret$n)
+    exacttest     <- binom.test(x=ret$statistic, n=ret$n, p=ret$pi0, alternative=ret$alternative)
     if(alt==1) {
-      exacttest        <- binom.test(x=ret$statistic, n=ret$n, p=ret$pi0, alternative=ret$alternative, conf.level=1-ret$alpha)
-      ret$criticalx    <- c(sum(cdf<ret$alpha/2), 1+sum(cdf>1-ret$alpha/2))
+      ret$criticalx    <- c(sum(cdf<ret$alpha/2), ret$n-sum(cdf>1-ret$alpha/2)+1)
       ret$acceptance0x <- ret$criticalx
     }    
     if (alt==2) { # less
-      exacttest        <- binom.test(ret$statistic, ret$n, ret$pi0, ret$alternative)
       ret$criticalx    <- sum(cdf<ret$alpha)
       ret$acceptance0x <- c(ret$criticalx, ret$n)      
     }
     if (alt==3) { # greater
-      exacttest        <- binom.test(ret$statistic, ret$n, ret$pi0, ret$alternative)
       ret$criticalx    <- ret$n-sum(cdf>1-ret$alpha)+1
       ret$acceptance0x <- c(0, ret$criticalx)   
     }      

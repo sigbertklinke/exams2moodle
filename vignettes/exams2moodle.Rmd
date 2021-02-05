@@ -145,6 +145,8 @@ d <- distribution("t", df=15)
 quantile(d, c(0.025, 0.975))
 d <- distribution("norm", mean=0, sd=1)
 cdf(d, c(-1.96, +1.96))
+d <- distribution("binom", size=9, prob=0.5)
+pdf(d, 5)
 ```
 
 ## Statistics helper

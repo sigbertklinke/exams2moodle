@@ -47,10 +47,7 @@ is used if \eqn{n>n.tapprox}. The \code{p.value} is computed from the cumulative
 the t distribution.
 }
 \examples{
-x <- runif(100)
-ttest_num(x=x)
-ttest_num(mean=mean(x), sd=sd(x), n=length(x))
-ret <- ttest_num(x=x)
-ret$alternative <- "less"
-ttest_num(arglist=ret)
+n <- 100
+x <- sum(runif(n)<0.4)
+proptest_num(x=x, n=n)
 }

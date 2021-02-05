@@ -1,4 +1,3 @@
-
 #' refer
 #'
 #' Creates names for elements of a vector.

@@ -11,6 +11,7 @@ LazyData: true
 Imports: 
   utils,
   MASS,
+  extraDistr,
   stringr,
   psych,
   xtable,

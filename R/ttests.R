@@ -45,7 +45,7 @@ ttests <- function(ttest, elem=NULL, hyperloop=NULL) {
                        norm        = c(TRUE, FALSE),
                        alpha       = unique(c(ttest$alpha, 0.01, 0.05, 0.1)),
                        alternative = c("two.sided", "greater", "less")
-                       )
+    )
   }
   hyperindex <- lapply(hyperloop, function(e){seq(e)} )
   loop       <- expand.grid(hyperindex)

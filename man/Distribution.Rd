@@ -2,59 +2,74 @@
 % Please edit documentation in R/distribution.R
 \name{distribution}
 \alias{distribution}
-\alias{standarddistributions}
 \alias{distribution.default}
 \alias{quantile.distribution}
 \alias{cdf}
+\alias{pmdf}
 \alias{toLatex.distribution}
 \alias{is.distribution}
+\alias{prob}
+\alias{prob1}
 \title{Class distribution}
 \usage{
 distribution(name, ...)
 
-standarddistributions(names = TRUE)
-
-\method{distribution}{default}(name, ...)
+\method{distribution}{default}(name, ..., discrete = NA)
 
 \method{quantile}{distribution}(x, probs = seq(0, 1, 0.25), ...)
 
 cdf(x, q, ...)
 
+pmdf(d, x, ...)
+
 \method{toLatex}{distribution}(object, name = NULL, param = NULL, digits = 3, ...)
 
 is.distribution(object, name = NULL)
+
+prob(d, min = -Inf, max = +Inf, tol = 1e-06)
+
+prob1(d, x, tol = 1e-06)
 }
 \arguments{
 \item{name}{character: a replacement of the name of the distribtuion type}
 
 \item{...}{further named distribution parameters}
 
-\item{names}{logical: should only the names of th standard distrutions returned or the LaTeX representations (default: \code{TRUE})}
+\item{discrete}{logical: Is distribution discrete? (default: \code{NA})}
 
-\item{x}{distribution}
+\item{x}{vector of values}
 
 \item{probs}{numeric: vector of probabilities with values in [0,1].}
 
 \item{q}{numeric: vector of quantiles}
 
+\item{d}{distribution}
+
 \item{object}{distribution object}
 
-\item{param}{character: names for the distrubtion parameters}
+\item{param}{character: names for the distribution parameters}
 
 \item{digits}{integer: number of digits used in \code{signif}}
+
+\item{min}{numeric: left border of interval}
+
+\item{max}{numeric: right border of interval}
+
+\item{tol}{numeric: tolerance for `max==min` (default: \code{1e-6})}
 }
 \value{
 a distribution object
 }
 \description{
-Holds one distribution including its parameters. The name of the distribution is used to determine, for example 
+Holds a univariate distribution including its parameters. The name of the distribution is used to determine, for example 
 the function for quantiles: \code{paste0("q", name)}. Usually the full name has to be used; some abbreviated names are possible
 \itemize{
-\item{\code{binom}} hypergeometric distribution, parameters: \code{size}, \code{prob}
+\item{\code{binom}} binomial distribution, parameters: \code{size}, \code{prob}
 \item{\code{hyper}} hypergeometric distribution, parameters: \code{m}, \code{n}, \code{k}
 \item{\code{geom}} geometric distribution, parameters: \code{prob}
 \item{\code{pois}} Poisson distribution, parameters: \code{lambda}
-\item{\code{unif}} hypergeometric distribution, parameters: \code{min}, \code{max}
+\item{\code{unif}} continuous uniform  distribution, parameters: \code{min}, \code{max}
+\item{\code{dunif}} discrete uniform  distribution, parameters: \code{min}, \code{max}
 \item{\code{exp}} exponential distribution, parameter: \code{rate}
 \item{\code{norm}} normal distribution, parameters: \code{mean}, \code{sd}
 \item{\code{lnorm}} log-normal distribution, parameters: \code{meanlog}, \code{sdlog}
@@ -62,18 +77,19 @@ the function for quantiles: \code{paste0("q", name)}. Usually the full name has 
 \item{\code{chisq}} chi-squared distribution, parameter: \code{df}
 \item{\code{f}} F distribution, parameters: \code{df1},  \code{df2}
 }
-Note that a quantile and cumulative distribution function must exist.
+Note that a  probability mass/density, quantile and cumulative distribution function must exist.
 
 The following functions exists for \code{disributions}:
 \itemize{
 \item{\code{distribution}} creates a distribution with name `name` and parameters
 \item{\code{quantile}} computes the quantiles of a distribution using `paste0('q', name)`
 \item{\code{cdf}} computes the cumulative distribution function of a distribution using `paste0('p', name)`
+\item{\code{pmdf}} computes the probability mass/density function of a distribution using `paste0('d', name)`
+\item{\code{prob}} computes the probability for a interval between `min` and `max` (`max` included, `min` excluded)
+\item{\code{prob1}} computes the point probability f
 \item{\code{is.distribution}} checks if `object` is distribution object. If `name` is given then it checks if distribution type is the same  
 \item{\code{toLatex}} generates a LaTeX representation of the distribution an its parameter
 }
-
-\code{standarddistributions} returns the names of some standard distributions and their LaTeX representation
 }
 \examples{
 d <- distribution("norm", mean=0, sd=1)
@@ -83,4 +99,7 @@ cdf(d, 0)
 is.distribution(d)
 is.distribution(d, "t")
 toLatex(d)
+# see the LaTeX names
+data(distributions)
+distributions
 }
