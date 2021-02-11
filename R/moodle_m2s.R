@@ -15,6 +15,7 @@
 #' @examples
 #' x <- 1
 moodle_m2s <- function(file, newfile=file) {
+  if (!endsWith(file, ".xml")) file <- paste0(file, '.xml')
   xml  <- moodle_xml2list(file)
   cont <- moodle_text(xml)
   for (i in 1:length(cont)) {
@@ -30,6 +31,7 @@ moodle_m2s <- function(file, newfile=file) {
     }
   }
   xml <- moodle_fraction(xml, frac)
+  if (!endsWith(newfile, ".xml")) newfile <- paste0(newfile, '.xml')
   moodle_list2xml(xml, newfile)
   invisible(newfile)
 }

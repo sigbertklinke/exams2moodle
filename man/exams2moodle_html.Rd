@@ -4,14 +4,14 @@
 \alias{exams2moodle_html}
 \title{exams2moodle_html}
 \usage{
-exams2moodle_html(exam, html = NULL, pattern = ".")
+exams2moodle_html(exam, name = NULL, pattern = ".")
 }
 \arguments{
 \item{exam}{list: return list from \code{exam2moodle}}
 
-\item{html}{character: name of HTML file (default: \code{NULL})}
+\item{name}{character: name of HTML file (default: \code{NULL})}
 
-\item{pattern}{character:  string containing a regular expression to match list elements (default: \code{.})}
+\item{pattern}{character: string containing a regular expression to match list elements (default: \code{.})}
 }
 \value{
 invisibly the names of list elements in the HTML file

@@ -9,6 +9,7 @@ License: GPL-3
 RoxygenNote: 7.1.1
 LazyData: true
 Imports: 
+  exams,
   utils,
   MASS,
   extraDistr,
