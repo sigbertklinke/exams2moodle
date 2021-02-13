@@ -4,7 +4,7 @@
 \alias{exams2moodle_html}
 \title{exams2moodle_html}
 \usage{
-exams2moodle_html(exam, name = NULL, pattern = ".")
+exams2moodle_html(exam, name = NULL, pattern = ".", mathjax = TRUE, header = 2)
 }
 \arguments{
 \item{exam}{list: return list from \code{exam2moodle}}
@@ -12,6 +12,10 @@ exams2moodle_html(exam, name = NULL, pattern = ".")
 \item{name}{character: name of HTML file (default: \code{NULL})}
 
 \item{pattern}{character: string containing a regular expression to match list elements (default: \code{.})}
+
+\item{mathjax}{logical: should be MathJax loaded (default: \code{TRUE})}
+
+\item{header}{integer: at which level of the list a \code{<h2>...</h2>} element should be included (default: \code{2})}
 }
 \value{
 invisibly the names of list elements in the HTML file
