@@ -4,7 +4,14 @@
 \alias{exams2moodle_html}
 \title{exams2moodle_html}
 \usage{
-exams2moodle_html(exam, name = NULL, pattern = ".", mathjax = TRUE, header = 2)
+exams2moodle_html(
+  exam,
+  name = NULL,
+  pattern = ".",
+  mathjax = TRUE,
+  header = 2,
+  merge = list(questionlist = "<br>")
+)
 }
 \arguments{
 \item{exam}{list: return list from \code{exam2moodle}}
@@ -16,6 +23,8 @@ exams2moodle_html(exam, name = NULL, pattern = ".", mathjax = TRUE, header = 2)
 \item{mathjax}{logical: should be MathJax loaded (default: \code{TRUE})}
 
 \item{header}{integer: at which level of the list a \code{<h2>...</h2>} element should be included (default: \code{2})}
+
+\item{merge}{list: should elements with \code{.XXXXnn} at the end merged (default: \code{list('questionlist'="<br>")})}
 }
 \value{
 invisibly the names of list elements in the HTML file
@@ -23,6 +32,8 @@ invisibly the names of list elements in the HTML file
 \description{
 Creates a HTML page with all list elements which names match \code{pattern}. Default is to match all list elements. 
 If \code{html} is \code{NULL} then no file will be written; just the name of matched list elements will be returned invisibly.
+If elements are merged then they are collapsed with \code{"\n"}. A named list of the form \code{"pattern"=collapse} 
+can be used to modify the character string to separate elements, e.g. by using \code{"<br>"}.
 }
 \examples{
 x <- 1

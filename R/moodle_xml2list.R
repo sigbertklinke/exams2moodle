@@ -61,14 +61,13 @@ moodle_xml2list <- function(file, quiet=TRUE) {
     }
     la
   }
-  #
-  #browser()
+  #  browser()
   stopifnot(file.exists(file))
   xml  <- readChar(file, file.info(file)$size)
   res  <- str_locate_all(xml, '<.*?>')[[1]]
   tags <- str_sub(xml, res[,1], res[,2])
   validtag   <- str_detect(tags, "^<[/?a-zA_Z][a-zA-Z0-9]*" )
-  htmltag    <- str_detect(tags, "^</*(style|table|thead|tbody|strong|code|span|img|pre|div|ul|ol|li|em|td|th|tr|a|p|i)[^a-zA-Z]") | str_detect(tags, '/>$')
+  htmltag    <- str_detect(tags, "^</*(blockquote|fieldset|optgroup|textarea|caption|button|iframe|legend|object|option|script|select|strong|embed|input|label|small|style|table|tbody|thead|cite|code|form|span|big|col|div|img|pre|sub|sup|wbr|br|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|hr|li|ol|td|th|tr|tt|ul|a|b|i|p|q|u)[^a-zA-Z]") | str_detect(tags, '/>$')
   invalidtag <- which(!validtag | htmltag)
   if (length(invalidtag)) {
     res  <- res[-invalidtag,]

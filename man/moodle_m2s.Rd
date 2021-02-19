@@ -4,12 +4,14 @@
 \alias{moodle_m2s}
 \title{moodle_m2s}
 \usage{
-moodle_m2s(file, newfile = file)
+moodle_m2s(file, newfile = file, quiet = TRUE)
 }
 \arguments{
 \item{file}{character: Moodle XML file with exercises to read from}
 
 \item{newfile}{character:  Moodle XML file to write to (default: \code{file})}
+
+\item{quiet}{logical: generate output during reading (default: \code{FALSE})}
 }
 \value{
 invisibly the file name written to

@@ -7,6 +7,7 @@
 #'
 #' @param file character: Moodle XML file with exercises to read from
 #' @param newfile character:  Moodle XML file to write to (default: \code{file})
+#' @param quiet logical: generate output during reading (default: \code{FALSE})
 #'
 #' @return invisibly the file name written to
 #' @export
@@ -14,9 +15,9 @@
 #'
 #' @examples
 #' x <- 1
-moodle_m2s <- function(file, newfile=file) {
+moodle_m2s <- function(file, newfile=file, quiet=TRUE) {
   if (!endsWith(file, ".xml")) file <- paste0(file, '.xml')
-  xml  <- moodle_xml2list(file)
+  xml  <- moodle_xml2list(file, quiet=quiet)
   cont <- moodle_text(xml)
   for (i in 1:length(cont)) {
     if (!is.null(cont[[i]]$single)) cont[[i]]$single <- TRUE
