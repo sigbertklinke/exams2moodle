@@ -13,10 +13,13 @@ now(last = 35)
 a character
 }
 \description{
-Returns a time stamp based on the current time. 
-If the clock resolution is not small enough then the function will throw an error.
+Returns a time stamp based on the current time. \code{now} calls basically 
+\code{gsub('.', '', sprintf('\%.20f', as.numeric(Sys.time())), fixed=TRUE)}. 
+To ensure that at each call a different time stamp is delivered \code{now} 
+may call \code{gsub(...)} several times until two different results are delivered. 
+The last one is then returned.
 }
 \examples{
-now()   # return all digits
-now(3)  # return only the first three digits
+now()   # returns all digits
+now(3)  # returns only the first three digits
 }

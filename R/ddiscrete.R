@@ -18,7 +18,7 @@
 #' ddiscrete(c(1,0,0,0), zero=TRUE)
 ddiscrete <- function(x, unit=NULL, zero=FALSE) {
   if (length(x)<2) x <- runif(as.integer(x))
-  if (is.null(unit)) unit <- 10^ceiling(0.2+log10(length(x)))
+  if (is.null(unit)) unit <- 10^ceiling(0.25+log10(length(x)))
   unit <- as.integer(unit)
   fx   <- as.integer(x/sum(x)*unit)
   if (!zero) fx[fx==0] <- 1

@@ -62,11 +62,12 @@ ddiscrete2 <- function(row, col, unit=NULL, zero=FALSE, FUN=nom.cc, target=NA, t
     colunit <- lcm(units)
   } 
   unit <- lcm(c(unit, rowunit*colunit))
-  fx   <- matrix(as.integer(unit*(row %o% col)), ncol=length(col), nrow=length(row))
+  # due to conversion error additional rounding
+  fx   <- matrix(as.integer(round(unit*(row %o% col))), ncol=length(col), nrow=length(row))
   it   <- 0
   curr <- 0
   if (!is.na(target)) {
-    # browser()
+    # browser(expr=(sum(fx)!=unit))
     fun  <- match.fun(FUN)
     curr <- fun(fx/unit, ...)
     d    <- abs(curr-target)
@@ -74,7 +75,7 @@ ddiscrete2 <- function(row, col, unit=NULL, zero=FALSE, FUN=nom.cc, target=NA, t
       while(it<maxit) {
         i    <- sample(length(row), size=2)
         j    <- sample(length(col), size=2)
-        doit <- (if(zero) all(fx[i,j]>=0) else all(fx[i,j]>0)) && all(fx[i,j]<=unit)
+        doit <- (if(zero) all(fx[i,j]>=0) else all(fx[i,j]>0)) && all(fx[i,j]<unit)
         if (doit) {
           fxt <- fx
           fxt[i[1], j[1]] <- fxt[[i[1], j[1]]]+1

@@ -37,8 +37,8 @@ Returns a HTML representation of a matrix with the following parameters and defa
 \describe{
 \item{\code{title}}{entry at the top left (default: \code{""})}
 \item{\code{caption}}{entry for the caption (default: \code{""})}
-\item{\code{names$col}}{entry for the caption (default: \code{colnames(x)})}
-\item{\code{names$row}}{entry for the caption (default: \code{rownames(x)})}
+\item{\code{names$col}}{entry for the column names (default: \code{colnames(x)})}
+\item{\code{names$row}}{entry for the row names (default: \code{rownames(x)})}
 \item{\code{style$table}}{style for the table (default: \code{""})}
 \item{\code{style$caption}}{style for the caption (default: \code{""})}
 \item{\code{style$title}}{style for the caption (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
@@ -47,7 +47,7 @@ Returns a HTML representation of a matrix with the following parameters and defa
 \item{\code{style$cell}}{style for the col names (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
 \item{\code{style$logical}}{style for a logical matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
 \item{\code{style$numeric}}{style for a numeric matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-\item{\code{style$char}}{style for a numeric matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;"})}
+\item{\code{style$char}}{style for a character matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;"})}
 \item{\code{format$title}}{\code{fmt} parameter to format the title via \link[base:sprintf]{base::sprintf} (default: \code{"\%s"})}
 \item{\code{format$row}}{\code{fmt} parameter to format the row names via \link[base:sprintf]{base::sprintf} (default: \code{"\%s"})}
 \item{\code{format$col}}{\code{fmt} parameter to format the col names via \link[base:sprintf]{base::sprintf} (default: \code{"\%s"})}

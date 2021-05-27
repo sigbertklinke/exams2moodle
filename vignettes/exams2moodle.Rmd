@@ -22,6 +22,225 @@ knitr::opts_chunk$set(
 library("exams2moodle")
 ```
 
+## Creating exercises 
+
+If you are generate exercise for a student you usually encounter two problems:
+
+1. Not all data sets are suitable since the students may round intermediate results which may lead to quite different, but true, solutions.
+2. You do not have access to the intermediate values which might be necessary to explain the solution.
+
+The second problem just requires the extension of the existing routines.
+
+You can encounter problem 1 only if the students are not allowed to use computers to solve the exercises. Personally
+I believe that students only understand a statistical coefficient or graphic if they are able to calculate the required value(s) by hand; it is like learning the times tables by heart with pupils. Otherwise most of them will be just random button pushers in the future.
+
+To solve the problems I decided to generate appropriate (full) data sets such that I have control over it. The general approach is
+
+```{r, eval=FALSE}
+library("exams")
+library("exams2moodle")
+repeat {
+  ... # some data generation
+  if (condition_holds) break
+}
+```
+
+For example for the compution of the median from five observations $x_i$ we know that the third sorted observation $x_{(3)}$) is the solution. Of course, we have to avoid that by chance the third sorted observation is equal to the
+third observation, otherwise a student may miss an important step in computing the median.
+
+```{r, eval=FALSE}
+library("exams")
+library("exams2moodle")
+repeat {
+  x  <- sample(1:10, size=5)
+  sx <- sort(x)
+  if (x[3]!=sx[3]) break
+}
+x
+```
+
+### Rounding: - `fractions`, `is_terminal`
+
+To overcome the rounding problem there is a simple approach: try to use (terminal) fractions. A terminal fraction generates a number with a finite number of digits, for example $\frac{1}{10}=0.1$. 
+
+The command `fractions` calls simply `MASS::fractions()` to avoid that you have explictly to load the library `MASS`. The result of calling fractions has an attribute `fracs`which contains a (approximate) fraction as $\frac{numerator}{denominator}$ representation.
+
+```{r}
+x <- c(1/5, 1/6)
+x
+fractions(x)
+str(fractions(x))
+```
+
+Therefore `is_terminal` tests if all entries are terminal fractions which means the denominators must be dividable by two and five only.
+
+```{r}
+x <- c(1/5, 1/6)
+is_terminal(x)
+```
+
+Unfortunately we use a decimal numeral system limiting the number possible of denominators which lead to terminal numbers; the ancient babylonian cultures using a sexagesimal numeral system had a arger number of denominators which would lead to terminal numbers.
+
+### Randomization - `exams2moodle_html`
+
+To avoid that the students all get the same exercises, we use the randomization the `exams` package offers by
+
+```{r, eval=FALSE}
+res <- exams2html(exercisename, nsamp=21, encoding="UTF-8", name="single") # create HTML for reading
+exams2moodle_html(res, name="test.html")                                   # create HTML for exams result
+res <- exams2moodle(exercisename, nsamp=100, name="single")                # create XML for Moodle import
+```
+
+In a first step we use `exams2html` to check the generated exercises. The `exams2...` return invisibly a list with all necessary informations about the generated exercises, e.g. true result, tolerance, solution text and so on.
+With the `exams2moodle_html` a part (or all) of this information is written to a HTML file for reading.
+
+Finally `exams2moodle` a Moodle XML file is generated for the import to Moodle. 
+
+### Multiple stories
+
+To make it more difficult for students to recognize similar tasks we change the story for a task. 
+Fortunately the internet provides us with a lot of collections with statistics exercises and the stories ;)
+
+The file are stored in `./subdir/exercisename_num.Rmd`, ./subdir/exercisename_1.Rmd`, ./subdir/exercisename_2.Rmd`, and so on. The framework in `./subdir/exercisename_num.Rmd` is shown below. Note that all story files have to create the same variables for the solution part.
+
+```{r, eval = FALSE}
+```{r, echo = FALSE, results = "hide"}
+library("exams")
+library("exams2moodle")
+ed      <- exams:::.exams_get_internal("xexams_dir_exercises")
+stories <- list.files(pattern="exercisename\\_[0-9]*.Rmd", path=paste0(ed, "/some_subdir"), full.names = TRUE)
+story   <- sample(stories, size=1)
+```
+
+Question
+========
+
+```{r, child=story} 
+```
+
+Some additional common question text, e.g. for rounding the result(s).
+
+Solution
+=========
+
+Some solution text which is basically the same for all exercisename_X.Rmd's.
+
+Meta-information
+================
+extype: ...
+exsolution: ...
+extol:  ...
+exname: `r if(exists("story")) story else knitr::current_input()`
+```
+
+Note: if you copy the source before then you will find [a zero-width space after the first backticks](https://rmarkdown.rstudio.com/articles_verbatim.html) which will be visible in RStudio 
+and needs to be deleted.
+
+### Exercise identification - `now`
+
+If we randomize the task and the stories then we may have a lot of different tasks. 
+If questions arise then we need to identify the exact task a student has.
+
+Therefore we embed a 
+
+```{r}
+substring(now(), 10)
+```
+
+The `now` function uses `gsub('.', '', sprintf("%.20f", as.numeric(Sys.time())), fixed=TRUE)` and ensures that every time called a different number is returned. 
+
+## Tasks
+
+### Level or measurement - `to_choice`
+
+For determinng the correct level of measuremnt of a variable we use an Excel file with two columns with the name of the variable and the level of measurement.
+
+```{r, eval=FALSE}
+library("rio")
+vars   <- import("skaleniveau.xlsx")
+skalen <- c("nominal", "ordinal", "metrisch")
+stopifnot(all(vars[,2] %in% skalen)) # protect against typos
+skala  <- sample(skalen, 1)
+exvars <- sample(nrow(vars), 8)
+tf     <- (vars[exvars,2]==skala)
+sc     <- to_choice(vars[exvars,1], tf)
+sc$questions <- c(sc$questions, "Keine der Variablen hat das gewünschte Skalenniveau") # Additional answer
+sc$solutions <- c(sc$solutions, !any(tf))                                              # TRUE or FALSE?
+```
+
+The `to_choice` function generates a object such that can be used in `answerlist` and `mchoice2string`. The first parameter is either a vector or data frame. The second parameter is a logical vector containing `TRUE` if the element in the vector (or row in the data frame) contains a true answer. 
+
+The parameter `shuffle` samples from the correct and false answers. The following example could replace the main code from the example above.
+
+```{r, eval=FALSE}
+skalen <- c("nominal", "ordinal", "metrisch")
+skala  <- sample(skalen, 1)
+exvars <- sample(nrow(vars), 8)
+sc     <- to_choice(vars[exvars,1], vars[exvars,2]==skala, shuffle=c(1,8))
+```
+
+By default the answers are ordered, the parameter `order` which function is used to order the answers (default: `order`).
+
+### Find the correct mean - `means_choice`, `to_choice`
+
+`means_choice` computes a list of mean values for a given data vector `x`:
+
+* arithmetic mean,
+* median,
+* harmonic mean,
+* geometric mean,
+* (first) mode,
+* trimmed mean, and
+* winsorized mean.
+
+If the parameter `trim` and/or `winsor` set to `NA` then these means will not be computed.
+
+```{r}
+digits <- 2  # round to two digits
+repeat {
+  x  <- round(runif(7, min=165, max=195), digits)
+  ms <- means_choice(x, digits)         
+  if (attr(ms, "mindiff")>0.1) break   # make sure that all values are different by 0.1
+}
+ms <- unlist(ms)
+sc <- to_choice(ms, names(ms)=='mean') # arithmetic mean is the correct solution
+str(sc)
+```
+
+The attribute `mindiff` gives the minimal distance between two mean values. This might be important for setting  `extol` the tolerance for numeric solutions. 
+
+### Compute the arithmetic mean - `num_result`, `as_string`, `as_obs`
+
+For computing the arithmetic mean we just need to ensure that data are rounded to a certain level since the computation with pocket calculator is simple.
+
+```{r}
+library("exams2moodle")
+n    <- sample(4:8, size=1)
+x    <- round(runif(n, min=1.65, max=1.85), 2)
+sc   <- num_result (c(mean(x), x), digits = 2, tolmult = 2)
+```
+
+The function `num_result` creates a list with the elements
+
+* `x` the original values,
+* `fx` the rounded values with `fmt` function from the `exams` package as character,
+* `tolerance` the tolerance for `extol`, and
+* `digits` the digits used for rounding.
+
+The tolerance is computed as `tolmult*10^(-digits)`.
+
+Since creating tables for Moodle is still a pain, we decided to replace a table with the $x$ values with
+a enumeration in LaTeX
+
+```{r}
+as_string(x)
+as_obs(x)
+as_obs(x, "y")
+```
+
+
+
+
 ## Data generation
 
 ### `add_data`
@@ -121,7 +340,6 @@ ddiscrete2(r, c, FUN=nom.cc, target=1)
 The units are determined as units of `r` multiplied with the units of `c`. Since a iterative process is used the parameter `maxit`is set to 500.
 If the attribute `iterations` is equal to `maxit` then the iterative process has not been finished. The attribute `target` gives the asscociation value obtained.
 
-
 ### `distribution`
 
 An object of class `distribution` holds a distribution (of a random variable). It is specified by a name and the distribution values. The name is used create quantile (`paste0("q", name)`) and cumulative distribution functions (`paste0("p", name)`), for example
@@ -149,6 +367,46 @@ d <- distribution("binom", size=9, prob=0.5)
 pdf(d, 5)
 ```
 
+### Approximation check for distributions
+
+The routines codifies rules for the approximation of distributions. If you generate dynamically exercises then 
+you might want to avoid that an approximation is possible. However, only a part of the requirements can be checked, e.g. for the central limit theorem if more than $c$ variables are added.
+
+#### `t2norm`
+
+A $t$ distribution can be approximated by a standard normal distribution when the degree of freedom is large enough. The default is $n>30$. The default value of $30$ can be overwritten with `options(distribution.t2norm=50)` or explicitly set.
+
+```{r}
+t2norm(40)
+t2norm(40, c=50) 
+```
+
+#### `binom2norm`
+
+A binomial distribution can be approximated by a normal distribution if:
+
+* single condition: $n*p*(1-p)>c$  or
+* double condition: $n*p>c$ and $n*(1-p)$.
+
+The default value of $c=9$ can be overwritten with `options(distribution.binom2norm=5)` or explicitly set.
+
+```{r}
+binom2norm(30, 0.5)
+binom2norm(50, 0.5)
+binom2norm(10, 0.5, type="double")
+binom2norm(30, 0.5, type="double")
+```
+
+#### `clt2norm`
+
+The central limit theorem allows the approximation of a sum of random variables with a normal distribution. The approximation holds if enough variables are added. The default value of $c=30$ can be overwritten with `options(distribution.clt2norm=5)` or explicitly set.
+
+
+```{r}
+clt2norm(50)
+clt2norm(50, c=100)
+```
+
 ## Statistics helper
 
 ### `means_choice`
@@ -172,6 +430,100 @@ str(means_choice(x, 2))
 
 The attribute `mindiff` gives the minimal distance between two mean values. 
 
+### `mcval`
+
+The function computes the mode (most common value) of data. Note that in case if the mode is not unique than all values will be returned.
+
+
+```{r}
+# numeric
+x <- sample(1:5, size=25, replace = TRUE)
+table(x)
+mcval(x)
+# character
+x <- sample(letters[1:5], size=25, replace = TRUE)
+table(x)
+mcval(x)
+# histogram
+x <- hist(runif(100), plot=FALSE)
+mcval(x)
+mcval(x, exact=TRUE)
+```
+
+### `histdata`
+
+`histdata` computes data about the corresponding histogram to a vector like `hist`, but returns more information which might be necessary for exercises. In contrast to `hist` `histdata` requires that `breaks` covers the entire range of `x`.
+
+`histdata` has the additional parameter`probs`. If `breaks="quantiles"` then it determines which quantiles are used.
+
+```{r}
+x  <- runif(25) 
+h1 <- hist(x, plot=FALSE)
+str(h1)
+h2 <- histdata(x)
+str(h2)
+```
+
+The returned list contains the following elements:
+
+* `x`: the finite data values used
+* `class`: the class number in which a value falls starting with 1 for the first class 
+* `xname`: the x argument name
+* `breaks`: the class borders
+* `lower`: the lower class borders
+* `upper`: the upper class borders
+* `width`: the class widths
+* `mid`: the class mids
+* `equidist`: if the classes are equidistant or not
+* `counts`: the number of observations in each class
+* `relfreq`: the relative class frequency
+* `density`: the frequency density computed as relative frequency divided by class width
+
+You can compute mean, quantile, median and mode for a histogram:
+
+```{r}
+x <- runif(25) 
+h <- histdata(x)
+# mean
+mean(h)
+# median & quantile
+median(h)
+quantile(h)
+# mode
+mcval(h)
+mcval(h, exact=TRUE)
+```
+
+### `histx`
+
+Creates a data set for a given set of breaks (class borders) and number of class observations. 
+The data are generated such that the data points are uniformly distributed in each class.
+
+```{r}
+breaks <- seq(1.6, 2.1, by=0.1)
+x <- histx (breaks, sample(5:15, length(breaks)-1))
+hist(x, breaks)
+rug(x)
+```
+
+### `histwidth`
+
+Creates histogram data sampled from a set of class widths with following properties:
+
+* the class density has a unique maximum, 
+* are the class density treminating numbers, and
+* the class frequency maximum differs from the class density maximum.
+
+
+```{r}
+hw <- histwidth(1.6, 2.1, widths=0.05*(1:4))
+str(hw)
+x  <- histx (hw$breaks, hw$n)
+hist(x, hw$breaks)
+rug(x)
+```
+
+
 ### `combinatorics`
 
 Computes all results for permutation, variation and combination with and without reptition.
@@ -181,6 +533,99 @@ combinatorics(7, 3)
 ```
 
 The attribute `mindiff` gives the minimal distance between two values. 
+
+### Association measures
+
+A set function which compute which compute association measure based on a contingency table:
+
+* `nom.cc` (corrected) contingency coefficient
+* `nom.cramer` Cramer's V
+* `ord.spearman` Spearman's rank correlation
+* `ord.kendall` Kendalls rank correlation
+
+```{r}
+tab <- matrix(round(10*runif(15)), ncol=5)
+nom.cc(tab)
+nom.cc(tab, correct=TRUE)
+nom.cramer(tab)
+ord.spearman(tab)
+ord.kendall(tab)
+```
+
+## Output helper
+
+### `affix`, `math`
+
+Adds a prefix and/or suffix to a (character) vector.
+
+```{r}
+x <- runif(5)
+affix(x, "$", "$")
+math(x)
+```
+
+### `as_string`, `as_obs`
+
+Converts a (character) vector in a single string. If the vector is not of class `character` then it will be converted to character.
+
+
+```{r}
+x <- round(runif(5),2)
+as_string(x) 
+as_string(x, last=" und ")                # as german
+as_string(x, collapse=" + ", last= " + ") # as sum
+# observations
+as_obs(x)
+as_obs(sort(x), name="y", sorted=TRUE)
+```
+
+### `as_table`
+
+Converts a vector into a horizontal table. The parameters are the same as in `xtable` which is used internally. Intended for the use as (class) frequency table.
+
+```{r}
+x   <- runif(5)
+tab <- vec2mat(x, colnames=1:length(x))
+as_table(tab)
+tab <- vec2mat(x, colnames=sprintf("%.0f-%0.f", 0:4, 1:5))
+as_table(tab)
+```
+
+### `html_matrix`
+
+Returns a HTML representation of a matrix as table. If you create exercises for Moodle then you can embed the HTML code in your exercise since it will be translated by `exams2moodle` to HTML, too. 
+
+```{r}
+# Copy and paste program to console
+library("exams2moodle")
+x    <- matrix(1:12, ncol=3)
+tmp  <- tempfile(fileext=".html")
+html <- html_matrix(x)
+writeLines(html, tmp)
+if (interactive()) browseURL(paste0("file:/", tmp))
+```
+
+With parameters the appearance of the table can be influenced:
+
+* `title` entry at the top left (default: `""`)
+* `caption` entry for the caption (default: `""`)
+* `names$col` entry for the column names (default: `colnames(x)`)
+* `names$row` entry for the row names  (default: `rownames(x)`)
+* `style$table` style for the table (default: `""`)
+* `style$caption` style for the caption (default: `""`)
+* `style$title` style for the caption (default: `"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"`)
+* `style$row` style for the row names (default: `"background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;"`)
+* `style$col` style for the col names (default: `"background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;"`)
+* `style$cell` style for the col names (default: `c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")`)
+* `style$logical` style for a logical matrix entry (default: `c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")`)
+* `style$numeric` style for a numeric matrix entry (default: `c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")`)
+* `style$char` style for a character matrix entry (default: `c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;"`)
+* `format$title$fmt` parameter to format the title via `sprintf` (default: `"\%s"`)
+* `format$row$fmt` parameter to format the row names via `sprintf` (default: `"\%s"`)
+* `format$col$fmt` parameter to format the col names via `sprintf` (default: `"\%s"`)
+* `format$cell$fmt` parameter to format a matrix entry via `sprintf`
+* `format$logical$fmt` parameter to format a logical matrix entry via `sprintf` (default: `"\%d"`)
+* `format$numeric$fmt` parameter to format a numeric matrix entry via `sprintf` (default: `"\%f"`)
 
 ## General helper 
 
@@ -218,7 +663,6 @@ firstmatch("c", c("chisq", "cauchy"))
 firstmatch("ca", c("chisq", "cauchy"))
 ```
 
-
 ### `fractions`
 
 `fractions` is a copy of `MASS::fractions` to compute from a numeric values fractions. 
@@ -228,9 +672,46 @@ d <- ddiscrete(6)
 fractions(d)
 ```
 
+### `hyperloop`, `unique.elem`
+
+For generating answers for multiple choice exercises it is helpful to run the same routine several times with different input parameters. For example students may forget to divide by n-1 or divide by n instead of n. `hyperloop` runs about all parameter combinations. 
+
+`ttest_num` is a routine which computes all information required for exercises with a $t$-test.
+
+```{r}
+library("exams2moodle")
+x <- runif(100)
+correct <- ttest_num(x=x, mu0=0.5, sigma=sqrt(1/12))
+str(correct)
+```    
+
+Now, let us run many $t$-tests (up to 384) with typical student errors. We extract all different test statistic and choose seven wrong answers and one correct answer with the condition that all solutions differ at least by 0.051.
+
+```{r}
+res <- hyperloop(ttest_num, 
+                 n           = list(1, correct$n, correct$n+1),
+                 mu0         = list(correct$mu0, correct$mean),
+                 mean        = list(correct$mu0, correct$mean), 
+                 sigma       = list(correct$sigma, correct$sd, sqrt(correct$sigma), sqrt(correct$sd)),
+                 sd          = list(correct$sigma, correct$sd, sqrt(correct$sigma), sqrt(correct$sd)),
+                 norm        = list(TRUE, FALSE)
+                )
+# extract all unique test statistics
+stat <- unlist(unique_elem(res, "statistic"))
+# select 7 wrong test statistic such that the difference 
+# between all possible test statistics is at least 0.01
+repeat {
+  sc <- to_choice(stat, stat==correct$statistic, shuffle=c(1,7))
+  if (all_different(sc$questions, 0.005)) break
+}
+# show possible results for a MC questions
+sc$questions
+sc$solutions
+```
+
 ### `pintegrate`
 
-`pintegrate` integrates about a finite interval a polynomial fucntion mtuiplied with a power. Assume a density is defined as
+`pintegrate` integrates about a finite interval a polynomial function multiplied with a power of `x`. The density is defined as
 
 $f(x) = \begin{cases} (c_q x^q + c_{q-1} x^{q-1} + \ldots + c_0) x^p dx & \text{ for } a\leq x\leq b\\
                         0                                                & \text{ otherwise}\end{cases}$
@@ -250,7 +731,15 @@ res[2]
 res[3]-res[2]^2
 ```
 
+### `vec2mat`
 
+Converts a vector to a row- or colum matrix.
+
+```{r}
+x <- runif(5)
+vec2mat(x)
+vec2mat(x, horizontal=FALSE)
+```
 
 ## Accessing and modifying the XML file
 

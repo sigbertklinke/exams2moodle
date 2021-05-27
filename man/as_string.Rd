@@ -2,23 +2,30 @@
 % Please edit documentation in R/as_string.R
 \name{as_string}
 \alias{as_string}
-\title{as_string
-converts a character vector in a single string}
+\alias{as_obs}
+\title{as_string}
 \usage{
 as_string(txt, collapse = ", ", last = ", and ")
+
+as_obs(txt, name = "x", sorted = FALSE, ...)
 }
 \arguments{
 \item{txt}{vector: (character) vector to merge}
 
 \item{collapse}{character: glue text between elements (default: \code{", "})}
 
-\item{last}{character: glue text between the two last elements  (default: \code{", and "})}
+\item{last}{character: glue text between the two last elements (default: \code{", and "})}
+
+\item{name}{character: observation name (default: \code{"x"})}
+
+\item{sorted}{logical: sorted observations or not (default: \code{FALSE})}
+
+\item{...}{further given from \code{as_obs} to \code{as_string}}
 }
 \value{
 a string
 }
 \description{
-as_string
 converts a character vector in a single string
 }
 \examples{
@@ -29,4 +36,7 @@ as_string(y)
 # toString
 as_string(as.character(x))
 as_string(as.character(y))
+#
+as_obs(x)
+as_obs(sort(x), sorted=TRUE)
 }

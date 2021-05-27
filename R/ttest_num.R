@@ -86,13 +86,17 @@ ttest_num<- function(..., arglist=NULL) {
     }
     if(alt==2) {
       ret$critical     <- quantile(ret$Statistic, ret$alpha)        
-      ret$acceptance0  <- c(-Inf, ret$critical) 
-      ret$p.value      <- 1-cdf(ret$Statistic, ret$statistic)
+      #ret$acceptance0  <- c(-Inf, ret$critical) 
+      ret$acceptance0  <- c(ret$critical, +Inf) 
+      #ret$p.value      <- 1-cdf(ret$Statistic, ret$statistic)
+      ret$p.value      <- cdf(ret$Statistic, ret$statistic)
     }
     if (alt==3) {
       ret$critical    <- quantile(ret$Statistic, 1-ret$alpha)            
-      ret$acceptance0 <- c(ret$critical, +Inf) 
-      ret$p.value     <- cdf(ret$Statistic, ret$statistic)
+#      ret$acceptance0 <- c(ret$critical, +Inf) 
+      ret$acceptance0 <- c(-Inf, ret$critical) 
+#      ret$p.value     <- cdf(ret$Statistic, ret$statistic)
+      ret$p.value     <- 1-cdf(ret$Statistic, ret$statistic)
     }
     ret$criticalx    <- ret$mu0 + ret$critical * ret$stderr
     ret$acceptance0x <- ret$mu0 + ret$acceptance0 * ret$stderr

@@ -4,8 +4,8 @@
 #' \describe{
 #' \item{\code{title}}{entry at the top left (default: \code{""})}
 #' \item{\code{caption}}{entry for the caption (default: \code{""})}
-#' \item{\code{names$col}}{entry for the caption (default: \code{colnames(x)})}
-#' \item{\code{names$row}}{entry for the caption (default: \code{rownames(x)})}
+#' \item{\code{names$col}}{entry for the column names (default: \code{colnames(x)})}
+#' \item{\code{names$row}}{entry for the row names (default: \code{rownames(x)})}
 #' \item{\code{style$table}}{style for the table (default: \code{""})}
 #' \item{\code{style$caption}}{style for the caption (default: \code{""})}
 #' \item{\code{style$title}}{style for the caption (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
@@ -14,7 +14,7 @@
 #' \item{\code{style$cell}}{style for the col names (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
 #' \item{\code{style$logical}}{style for a logical matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
 #' \item{\code{style$numeric}}{style for a numeric matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-#' \item{\code{style$char}}{style for a numeric matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;"})}
+#' \item{\code{style$char}}{style for a character matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;"})}
 #' \item{\code{format$title}}{\code{fmt} parameter to format the title via [base::sprintf] (default: \code{"\%s"})}
 #' \item{\code{format$row}}{\code{fmt} parameter to format the row names via [base::sprintf] (default: \code{"\%s"})}
 #' \item{\code{format$col}}{\code{fmt} parameter to format the col names via [base::sprintf] (default: \code{"\%s"})}
@@ -63,6 +63,27 @@ html_matrix <- function(x, title=NULL, caption=NULL, format=list(), style=list()
     if (is.null(data)) stop("two dimensional array or data frame expected");
     return(list(data=data, colnames=coln, rownames=rown));  
   }
+  #
+  #as_vector <- function(v, mode="any", length=length(v)) {
+  #  ind <- 1+((0:(length-1)%%length(v))
+  #  as.vector(v[ind], mode)
+  #}
+  #
+  #as_matrix <- function(m, mode="any", nrow=NA, ncol=NA) {
+  #  if (is.matrix(m)) {
+  #    mrow <- nrow(m)
+  #    mcol <- ncol(m)
+  #  } else {
+  #    mrow <- length(m)
+  #    mcol <- 1
+  #  }
+  #  if (is.na(nrow)) nrow <- mrow
+  #  if (is.na(ncol)) ncol <- mcol
+  #  m <- matrix(as.vector(m, mode), nrow=mrow, ncol=mcol)
+  #  rind <- 1+((0:(nrow-1))%%mrow) 
+  #  cind <- 1+((0:(ncol-1))%%mcol) 
+  #  matrix(m[rind,cind], nrow=nrow, ncol=ncol)
+  #}
   #
   recycle <- function (vec, max) { return (1+(vec-1)%%max); }
   #
