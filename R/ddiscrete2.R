@@ -3,18 +3,19 @@
 #' Creates a bivariate discrete probability function based on the marginal probability fuctions 
 #' \code{row} and \code{col}. If \code{unit} is not given then unit will be the product of the units
 #' used in \code{row} and \code{col} otherwise the least common multiple of \code{unit} product of 
-#' the units used in \code{row} and \code{col}. \code{zero} allows for zero entries in the common
-#' distribution.
+#' the units used in \code{row} and \code{col}. 
 #' If \code{target} is \code{NA} then the common distribution of two independent random variables
 #' is returned otherwise an iterative algorithm is run to approach a \code{target} association or 
-#' correlation measure. \code{FUN} computes the association or correlation measure based on a
+#' correlation measure, see also [exams2moodle::assoc_data()] called internally.
+#' \code{zero} allows for zero entries in the common distribution.
+#' \code{FUN} computes the association or correlation measure based on a
 #' frequency table. \code{tol} gives the maximal deviation of the association or correlation measure
 #' and the \code{target} value. \code{maxit} limits the number of steps.
 #' Note that a solution is not guaranteed, especially for extreme values for \code{target}, for example
 #' for +1 or -1 or values nearby.
 #' If \code{attr(joint, "iterations")==maxit} then you need 
 #' either to increase \code{maxit}, to decrease \code{tol} or to check if you have choosen an 
-#' appropriate \code{target} value (for a nominal measure in [0,1], for ordinal measure in [-1, 1]).
+#' appropriate \code{target} value (for a nominal measure in \eqn{0 <= target <= 1}, for ordinal measure in \eqn{-1 <= target <= +1}).
 #'
 #' @param row numeric: marginal row distribution
 #' @param col numeric: marginal col distribution
@@ -26,6 +27,7 @@
 #' @param maxit integer: maximal number of iterations (default: \code{100})
 #' @param ... further parameter for \code{FUN}
 #' 
+#' @md
 #' @return a discrete probability function
 #' @export
 #'
@@ -63,36 +65,38 @@ ddiscrete2 <- function(row, col, unit=NULL, zero=FALSE, FUN=nom.cc, target=NA, t
   } 
   unit <- lcm(c(unit, rowunit*colunit))
   # due to conversion error additional rounding
-  fx   <- matrix(as.integer(round(unit*(row %o% col))), ncol=length(col), nrow=length(row))
-  it   <- 0
-  curr <- 0
-  if (!is.na(target)) {
-    # browser(expr=(sum(fx)!=unit))
-    fun  <- match.fun(FUN)
-    curr <- fun(fx/unit, ...)
-    d    <- abs(curr-target)
-    if (!equal(d,0, tol)) {
-      while(it<maxit) {
-        i    <- sample(length(row), size=2)
-        j    <- sample(length(col), size=2)
-        doit <- (if(zero) all(fx[i,j]>=0) else all(fx[i,j]>0)) && all(fx[i,j]<unit)
-        if (doit) {
-          fxt <- fx
-          fxt[i[1], j[1]] <- fxt[[i[1], j[1]]]+1
-          fxt[i[1], j[2]] <- fxt[[i[1], j[2]]]-1
-          fxt[i[2], j[1]] <- fxt[[i[2], j[1]]]-1
-          fxt[i[2], j[2]] <- fxt[[i[2], j[2]]]+1
-          curr <- fun(fxt/unit, ...)
-          dt   <- abs(curr-target)
-          if (dt<d) {
-            d    <- dt
-            fx   <- fxt
-            if (equal(d,0, tol)) break
-          }
-        }
-        it <- it+1
-      }
-    }
-  }
-  structure(fx/unit, unit=unit, iterations=it, target=curr)
+  fx <- matrix(as.integer(round(unit*(row %o% col))), ncol=length(col), nrow=length(row))
+  fx <- assoc_data(fx, zero=zero, FUN=FUN, target=target, tol=tol, maxit=maxit, ...)
+#  it   <- 0
+#  curr <- 0
+#  if (!is.na(target)) {
+#    # browser(expr=(sum(fx)!=unit))
+#    fun  <- match.fun(FUN)
+#    curr <- fun(fx/unit, ...)
+#    d    <- abs(curr-target)
+#    if (!equal(d,0, tol)) {
+#      while(it<maxit) {
+#        i    <- sample(length(row), size=2)
+#        j    <- sample(length(col), size=2)
+#        doit <- (if(zero) all(fx[i,j]>=0) else all(fx[i,j]>0)) && all(fx[i,j]<unit)
+#        if (doit) {
+#          fxt <- fx
+#          fxt[i[1], j[1]] <- fxt[[i[1], j[1]]]+1
+#          fxt[i[1], j[2]] <- fxt[[i[1], j[2]]]-1
+#          fxt[i[2], j[1]] <- fxt[[i[2], j[1]]]-1
+#          fxt[i[2], j[2]] <- fxt[[i[2], j[2]]]+1
+#          curr <- fun(fxt/unit, ...)
+#          dt   <- abs(curr-target)
+#          if (dt<d) {
+#            d    <- dt
+#            fx   <- fxt
+#            if (equal(d,0, tol)) break
+#          }
+#        }
+#        it <- it+1
+#      }
+#    }
+#  }
+  #browser()
+  structure(fx/unit, unit=unit, iterations=attr(fx, "iterations"), target=attr(fx, "target"))
 }

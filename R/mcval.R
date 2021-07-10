@@ -35,7 +35,7 @@ mcval.histogram <- function(x, exact=FALSE, ...) {
     fl  <- ifelse(modes==1, 0, x$density[modes-1])
     fc  <- x$density[modes]
     fr  <- ifelse(modes==length(x$density), 0, x$density[modes+1])
-    ret <- x$breaks[modes]+(fc-fr)/(2*fc-fr-fl)*(x$breaks[modes+1]-x$breaks[modes])
+    ret <- x$breaks[modes]+(fc-fl)/(2*fc-fr-fl)*(x$breaks[modes+1]-x$breaks[modes])
   } 
   attr(ret, "pos") <- modes
   ret

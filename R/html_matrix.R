@@ -9,7 +9,7 @@
 #' \item{\code{style$table}}{style for the table (default: \code{""})}
 #' \item{\code{style$caption}}{style for the caption (default: \code{""})}
 #' \item{\code{style$title}}{style for the caption (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
-#' \item{\code{style$row}}{style for the row names (default: \code{"background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;"})}
+#' \item{\code{style$row}}{style for the row names (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
 #' \item{\code{style$col}}{style for the col names (default: \code{"background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;"})}
 #' \item{\code{style$cell}}{style for the col names (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
 #' \item{\code{style$logical}}{style for a logical matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
@@ -97,8 +97,8 @@ html_matrix <- function(x, title=NULL, caption=NULL, format=list(), style=list()
   param$style.table    = as.character(if (is.null(style$table)) "" else style$table);
   param$style.caption  = as.character(if (is.null(style$caption)) "" else style$caption); 
   param$style.title    = as.character(if (is.null(style$caption)) "background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;" else style$caption);
-  param$style.row      = as.vector(if (is.null(style$row)) "background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;" else style$row);
-  param$style.col      = as.vector(if (is.null(style$col)) "background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;" else style$col);
+  param$style.row      = as.vector(if (is.null(style$row)) "background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;" else style$row);
+  param$style.col      = as.vector(if (is.null(style$col)) "background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;min-width:60px;" else style$col);
   param$style.logical  = as.matrix(if (is.null(style$logical)) c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;") else style$logical);
   param$style.numeric  = as.matrix(if (is.null(style$numeric)) 
     if (is.null(style$cell)) c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;") 

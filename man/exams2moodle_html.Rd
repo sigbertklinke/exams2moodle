@@ -10,7 +10,8 @@ exams2moodle_html(
   pattern = ".",
   mathjax = TRUE,
   header = 2,
-  merge = list(questionlist = "<br>")
+  merge = list(questionlist = "<br>"),
+  png = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ exams2moodle_html(
 \item{header}{integer: at which level of the list a \code{<h2>...</h2>} element should be included (default: \code{2})}
 
 \item{merge}{list: should elements with \code{.XXXXnn} at the end merged (default: \code{list('questionlist'="<br>")})}
+
+\item{png}{logical: if a entry ends with \code{.png} then the function will try to embed the PNG in the output}
 }
 \value{
 invisibly the names of list elements in the HTML file

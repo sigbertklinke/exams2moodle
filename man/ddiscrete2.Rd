@@ -39,21 +39,22 @@ ddiscrete2(
 a discrete probability function
 }
 \description{
-Creates a bivariate discrete probability function based on the marginal probability fuctions 
+Creates a bivariate discrete probability function based on the marginal probability fuctions
 \code{row} and \code{col}. If \code{unit} is not given then unit will be the product of the units
-used in \code{row} and \code{col} otherwise the least common multiple of \code{unit} product of 
-the units used in \code{row} and \code{col}. \code{zero} allows for zero entries in the common
-distribution.
+used in \code{row} and \code{col} otherwise the least common multiple of \code{unit} product of
+the units used in \code{row} and \code{col}.
 If \code{target} is \code{NA} then the common distribution of two independent random variables
-is returned otherwise an iterative algorithm is run to approach a \code{target} association or 
-correlation measure. \code{FUN} computes the association or correlation measure based on a
+is returned otherwise an iterative algorithm is run to approach a \code{target} association or
+correlation measure, see also \code{\link[=assoc_data]{assoc_data()}} called internally.
+\code{zero} allows for zero entries in the common distribution.
+\code{FUN} computes the association or correlation measure based on a
 frequency table. \code{tol} gives the maximal deviation of the association or correlation measure
 and the \code{target} value. \code{maxit} limits the number of steps.
 Note that a solution is not guaranteed, especially for extreme values for \code{target}, for example
 for +1 or -1 or values nearby.
-If \code{attr(joint, "iterations")==maxit} then you need 
-either to increase \code{maxit}, to decrease \code{tol} or to check if you have choosen an 
-appropriate \code{target} value (for a nominal measure in [0,1], for ordinal measure in [-1, 1]).
+If \code{attr(joint, "iterations")==maxit} then you need
+either to increase \code{maxit}, to decrease \code{tol} or to check if you have choosen an
+appropriate \code{target} value (for a nominal measure in \eqn{0 <= target <= 1}, for ordinal measure in \eqn{-1 <= target <= +1}).
 }
 \examples{
 row <- ddiscrete(runif(5))

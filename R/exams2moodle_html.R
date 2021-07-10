@@ -11,6 +11,7 @@
 #' @param mathjax logical: should be MathJax loaded (default: \code{TRUE})
 #' @param header integer: at which level of the list a \code{<h2>...</h2>} element should be included (default: \code{2})
 #' @param merge list: should elements with \code{.XXXXnn} at the end merged (default: \code{list('questionlist'="<br>")})
+#' @param png logical: if a entry ends with \code{.png} then the function will try to embed the PNG in the output
 #'
 #' @return invisibly the names of list elements in the HTML file
 #' @export
@@ -18,7 +19,7 @@
 #' @examples
 #' x <- 1
 exams2moodle_html <- function(exam, name=NULL, pattern=".", mathjax=TRUE, 
-                              header=2, merge=list('questionlist'="<br>")) { 
+                              header=2, merge=list('questionlist'="<br>"), png=TRUE) { 
   lst  <- unlist(exam)
   nlst <- names(lst)
   if (!is.null(merge)) {
@@ -57,7 +58,11 @@ exams2moodle_html <- function(exam, name=NULL, pattern=".", mathjax=TRUE,
           ret <- c(ret, '<table width="100%">')
         }
       }
-      ret <- c(ret, sprintf('<tr><td><div id="%s" width="100%%">%s</div></td>', nlst[i], lst[i]))
+      img <- ''
+      if (png && endsWith(lst[i], ".png")) {
+        if (file.exists(lst[i])) img <- sprintf('<br><img src="data:image/png;base64,%s"></body>', base64enc::base64encode(lst[i]))
+      } 
+      ret <- c(ret, sprintf('<tr><td><div id="%s" width="100%%">%s%s</div></td>', nlst[i], lst[i], img))
       if (header>0) slst[[i]] <- slst[[i]][-(1:header)]
       ret <- c(ret, sprintf('<td style="text-align:right;background-color: grey;">%s</td></tr>', 
                             paste0(slst[[i]], collapse=" "))
