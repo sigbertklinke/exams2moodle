@@ -2,62 +2,54 @@
 % Please edit documentation in R/html_matrix.R
 \name{html_matrix}
 \alias{html_matrix}
+\alias{html_matrix.default}
 \title{html_matrix}
 \usage{
-html_matrix(
+html_matrix(x, ...)
+
+\method{html_matrix}{default}(
   x,
-  title = NULL,
-  caption = NULL,
-  format = list(),
-  style = list(),
-  names = list(),
-  type = "html"
+  ...,
+  byrow = FALSE,
+  numeric = list(text_align = "right"),
+  integer = list(text_align = "right"),
+  char = list(text_align = "left"),
+  logical = list(text_align = "right"),
+  border = "#999999"
 )
 }
 \arguments{
-\item{x}{matrix: matrix to print in HTML}
+\item{x}{vector, matrix, array, table or html_matrix: input}
 
-\item{title}{character: matrix title, the left upper entry of the matrix (default: \code{NULL})}
+\item{...}{further parameters}
 
-\item{caption}{character: caption (default: \code{NULL})}
+\item{byrow}{logical: create a row or column matrix if `x` is one-dimensional (default: \code{FALSE})}
 
-\item{format}{list: list of parameters to format matrix entries (default: \code{list()})}
+\item{numeric}{list: list of HTML style properties for a cell if `class(x[i,j])=="numeric"` (default: \code{list(text_align="right")})}
 
-\item{style}{list: list of parameters to set the style parameters for each matrix entry (default: \code{list()})}
+\item{integer}{list: list of HTML style properties for a cell if `class(x[i,j])=="integer"` (default: \code{list(text_align="right")})}
 
-\item{names}{list: list of row- and/or colnames (default: \code{list()})}
+\item{char}{list: list of HTML style properties for a cell if `class(x[i,j])=="character"` (default: \code{list(text_align="left")})}
 
-\item{type}{character: output format, either \code{"html"}, \code{"wiki"} or \code{"plain"}  (default: \code{"html"})}
+\item{logical}{list: list of HTML style properties for a cell if `class(x[i,j])=="logical"` (default: \code{list(text_align="right")})}
+
+\item{border}{character: vector of background color for a border cell (default: \code{"#999999")})}
 }
 \value{
-Plain text, HTML or MediaWiki code
+`html_matrix` returns a html_matrix, `print` returns invisible a character matrix
 }
 \description{
-Returns a HTML representation of a matrix with the following parameters and defaults (Note that recycling can used with most parameters):
-\describe{
-\item{\code{title}}{entry at the top left (default: \code{""})}
-\item{\code{caption}}{entry for the caption (default: \code{""})}
-\item{\code{names$col}}{entry for the column names (default: \code{colnames(x)})}
-\item{\code{names$row}}{entry for the row names (default: \code{rownames(x)})}
-\item{\code{style$table}}{style for the table (default: \code{""})}
-\item{\code{style$caption}}{style for the caption (default: \code{""})}
-\item{\code{style$title}}{style for the caption (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
-\item{\code{style$row}}{style for the row names (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
-\item{\code{style$col}}{style for the col names (default: \code{"background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;"})}
-\item{\code{style$cell}}{style for the col names (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-\item{\code{style$logical}}{style for a logical matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-\item{\code{style$numeric}}{style for a numeric matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-\item{\code{style$char}}{style for a character matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;"})}
-\item{\code{format$title}}{\code{fmt} parameter to format the title via \link[base:sprintf]{base::sprintf} (default: \code{"\%s"})}
-\item{\code{format$row}}{\code{fmt} parameter to format the row names via \link[base:sprintf]{base::sprintf} (default: \code{"\%s"})}
-\item{\code{format$col}}{\code{fmt} parameter to format the col names via \link[base:sprintf]{base::sprintf} (default: \code{"\%s"})}
-\item{\code{format$cell}}{\code{fmt} parameter to format a matrix entry via \link[base:sprintf]{base::sprintf}}
-\item{\code{format$logical}}{\code{fmt} parameter to format a logical matrix entry via \link[base:sprintf]{base::sprintf} (default: \code{"\%d"})}
-\item{\code{format$numeric}}{\code{fmt} parameter to format a numeric matrix entry via \link[base:sprintf]{base::sprintf} (default: \code{"\%f"})}
-\item{\code{format$char}}{\code{fmt} parameter to format a character matrix entry via \link[base:sprintf]{base::sprintf} (default: \code{"\%s"})}
-}
+Creates from a vector, matrix, array,  or table a HTML representation of it. The HTML representation has one column and row more 
+than the data. The additional row and column are used to have a title (top left), the column names (top), and the row names (left).
+
+You can set the style attributes (`<td style="...">`) via `hm_cell`, `hm_title`, `hm_col`, and `hm_row`. 
+For example: `hm_cell(hm, 1, 1, text_align="right")` will lead to (`<td style="text-align:right;">`) for the cell (1,1) and any
+unnamed element will change the cell value. 
+Note: since `-` is an operator in R, we use `_` instead. Of course, you could use `"text-align"="right"`, but I'am lazy.
 }
 \examples{
-x <- matrix(runif(12), ncol=3)
-html_matrix(x)
+m <- matrix(1:6, ncol=2)
+m
+l <- html_matrix(m)
+l
 }

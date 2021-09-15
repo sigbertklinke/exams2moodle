@@ -1,211 +1,236 @@
-#' html_matrix
+#' @rdname html_matrix
+#' @title html_matrix
+#' @description Creates from a vector, matrix, array,  or table a HTML representation of it. The HTML representation has one column and row more 
+#' than the data. The additional row and column are used to have a title (top left), the column names (top), and the row names (left).
+#' 
+#' You can set the style attributes (`<td style="...">`) via `hm_cell`, `hm_title`, `hm_col`, and `hm_row`. 
+#' For example: `hm_cell(hm, 1, 1, text_align="right")` will lead to (`<td style="text-align:right;">`) for the cell (1,1) and any
+#' unnamed element will change the cell value. 
+#' Note: since `-` is an operator in R, we use `_` instead. Of course, you could use `"text-align"="right"`, but I'am lazy.
+#' 
+#' @param x vector, matrix, array, table or html_matrix: input
+#' @param byrow logical: create a row or column matrix if `x` is one-dimensional (default: \code{FALSE})
+#' @param numeric list: list of HTML style properties for a cell if `class(x[i,j])=="numeric"` (default: \code{list(text_align="right")})
+#' @param integer list: list of HTML style properties for a cell if `class(x[i,j])=="integer"` (default: \code{list(text_align="right")})
+#' @param char list: list of HTML style properties for a cell if `class(x[i,j])=="character"` (default: \code{list(text_align="left")})
+#' @param logical list: list of HTML style properties for a cell if `class(x[i,j])=="logical"` (default: \code{list(text_align="right")})
+#' @param border character: vector of background color for a border cell (default: \code{"#999999")})
+#' @param ... further parameters
 #'
-#' Returns a HTML representation of a matrix with the following parameters and defaults (Note that recycling can used with most parameters):
-#' \describe{
-#' \item{\code{title}}{entry at the top left (default: \code{""})}
-#' \item{\code{caption}}{entry for the caption (default: \code{""})}
-#' \item{\code{names$col}}{entry for the column names (default: \code{colnames(x)})}
-#' \item{\code{names$row}}{entry for the row names (default: \code{rownames(x)})}
-#' \item{\code{style$table}}{style for the table (default: \code{""})}
-#' \item{\code{style$caption}}{style for the caption (default: \code{""})}
-#' \item{\code{style$title}}{style for the caption (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
-#' \item{\code{style$row}}{style for the row names (default: \code{"background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;"})}
-#' \item{\code{style$col}}{style for the col names (default: \code{"background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;"})}
-#' \item{\code{style$cell}}{style for the col names (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-#' \item{\code{style$logical}}{style for a logical matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-#' \item{\code{style$numeric}}{style for a numeric matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;")})}
-#' \item{\code{style$char}}{style for a character matrix entry (default: \code{c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;"})}
-#' \item{\code{format$title}}{\code{fmt} parameter to format the title via [base::sprintf] (default: \code{"\%s"})}
-#' \item{\code{format$row}}{\code{fmt} parameter to format the row names via [base::sprintf] (default: \code{"\%s"})}
-#' \item{\code{format$col}}{\code{fmt} parameter to format the col names via [base::sprintf] (default: \code{"\%s"})}
-#' \item{\code{format$cell}}{\code{fmt} parameter to format a matrix entry via [base::sprintf]}
-#' \item{\code{format$logical}}{\code{fmt} parameter to format a logical matrix entry via [base::sprintf] (default: \code{"\%d"})}
-#' \item{\code{format$numeric}}{\code{fmt} parameter to format a numeric matrix entry via [base::sprintf] (default: \code{"\%f"})}
-#' \item{\code{format$char}}{\code{fmt} parameter to format a character matrix entry via [base::sprintf] (default: \code{"\%s"})}
-#' }
-#'
-#' @param x matrix: matrix to print in HTML
-#' @param title character: matrix title, the left upper entry of the matrix (default: \code{NULL}) 
-#' @param caption character: caption (default: \code{NULL}) 
-#' @param format list: list of parameters to format matrix entries (default: \code{list()})
-#' @param style list: list of parameters to set the style parameters for each matrix entry (default: \code{list()})
-#' @param names list: list of row- and/or colnames (default: \code{list()})
-#' @param type character: output format, either \code{"html"}, \code{"wiki"} or \code{"plain"}  (default: \code{"html"})
-#'
-#' @return Plain text, HTML or MediaWiki code
-#' @md
+#' @return `html_matrix` returns a html_matrix, `print` returns invisible a character matrix 
 #' @export
 #'
 #' @examples
-#' x <- matrix(runif(12), ncol=3)
-#' html_matrix(x)
-html_matrix <- function(x, title=NULL, caption=NULL, format=list(), style=list(), names=list(), type="html") {
-  getData <- function(x) {
-    data <- NULL;
-    coln <- colnames(x);
-    rown <- rownames(x);
-    if (is.data.frame(x)) {
-      data <- as.list(x);
-      if (is.null(coln)) coln <-sprintf("V%i", 1:ncol(x)); 
-      if (is.null(rown)) rown <-sprintf("%i",  1:nrow(x)); 
+#' m <- matrix(1:6, ncol=2)
+#' m
+#' l <- html_matrix(m)
+#' l
+html_matrix <- function(x, ...) { UseMethod("html_matrix") }
+
+#' @rdname html_matrix
+#' @export
+html_matrix.default <- function(x, ..., byrow=FALSE, 
+                                numeric=list(text_align="right"), 
+                                integer=list(text_align="right"), 
+                                char=list(text_align="left"),
+                                logical=list(text_align="right"),
+                                border="#999999") {
+  title <- deparse(substitute(x))
+  val   <- as.list(x) 
+  dim   <- attr(x, "dim")
+  rownames <- colnames <- NULL
+  if (length(dim)<2) {
+    if (byrow) { 
+      dim <- c(length(val), 1) 
+      colnames <- names(x)
+    } else {
+      dim <- c(1, length(val))    
+      rownames <- names(x)
     }
-    if (is.matrix(x)) { 
-      data <- lapply(seq_len(ncol(x)), function(i) x[,i]);
-      if (is.null(coln)) coln <-sprintf("[,%i]", 1:ncol(x)); 
-      if (is.null(rown)) rown <-sprintf("[%i,]", 1:nrow(x)); 
+  } else {
+    if (length(dim)>2) dim <- c(dim[1], prod(dim[-1]))
+    colnames <- colnames(x)
+    rownames <- rownames(x)
+  }
+  if (is.null(colnames)) colnames <- sprintf("[,%.0f]", seq(dim[2]))
+  if (is.null(rownames)) rownames <- sprintf("[%.0f,]", seq(dim[1]))
+  cols <- vector("list", length(colnames))
+  for (i in seq(colnames)) cols[[i]] <- list(value=colnames[i], fmt="%s", text_align="right", background_color=border, vertical_align="top", font_weight="bold", min_width="60px")
+  rows <- vector("list", length(rownames))
+  for (i in seq(rownames)) rows[[i]] <- list(value=rownames[i], fmt="%s", text_align="left", background_color=border, vertical_align="top", font_weight="bold")
+  ret  <- vector("list", length(val))
+  for (i in seq(val)) {
+    reti <- list()
+    if("integer" %in% class(val[[i]])) {
+      reti <- numeric
+      if (is.null(reti$fmt)) reti$fmt <- "%.0f"
     }
-    if (is.null(data)) {
-      data <- as.matrix(x)
-      if (is.null(coln)) coln <-sprintf("[,%i]", 1:ncol(data)); 
-      if (is.null(rown)) rown <-sprintf("[%i,]", 1:nrow(data)); 
-      data <- lapply(seq_len(ncol(data)), function(i) data[,i]);
+    if("numeric" %in% class(val[[i]])) {
+      reti <- numeric
+      if (is.null(reti$fmt)) reti$fmt <- "%.3f"
     }
-    if (is.null(data)) stop("two dimensional array or data frame expected");
-    return(list(data=data, colnames=coln, rownames=rown));  
+    if("logical" %in% class(val[[i]])) {
+      reti <- logical
+      if (is.null(reti$fmt)) reti$fmt <- "%.0f"
+    }
+    if("character" %in% class(val[[i]])) {
+      reti <- char
+      if (is.null(reti$fmt)) reti$fmt <- "%s"
+    }
+    reti$value <- val[[i]]
+    ret[[i]]   <- reti
   }
   #
-  #as_vector <- function(v, mode="any", length=length(v)) {
-  #  ind <- 1+((0:(length-1)%%length(v))
-  #  as.vector(v[ind], mode)
-  #}
-  #
-  #as_matrix <- function(m, mode="any", nrow=NA, ncol=NA) {
-  #  if (is.matrix(m)) {
-  #    mrow <- nrow(m)
-  #    mcol <- ncol(m)
-  #  } else {
-  #    mrow <- length(m)
-  #    mcol <- 1
-  #  }
-  #  if (is.na(nrow)) nrow <- mrow
-  #  if (is.na(ncol)) ncol <- mcol
-  #  m <- matrix(as.vector(m, mode), nrow=mrow, ncol=mcol)
-  #  rind <- 1+((0:(nrow-1))%%mrow) 
-  #  cind <- 1+((0:(ncol-1))%%mcol) 
-  #  matrix(m[rind,cind], nrow=nrow, ncol=ncol)
-  #}
-  #
-  recycle <- function (vec, max) { return (1+(vec-1)%%max); }
-  #
-  gd = getData(x);
-  # defaults and check
-  param                = list();
-  param$title          = as.character(if (is.null(title)) "" else title);
-  param$caption        = as.character(if (is.null(caption)) "" else caption);
-  param$col            = as.vector(if (is.null(names$col)) gd$colnames else names$col, "character");
-  param$row            = as.vector(if (is.null(names$row)) gd$rownames else names$row, "character");  
-  param$style.table    = as.character(if (is.null(style$table)) "" else style$table);
-  param$style.caption  = as.character(if (is.null(style$caption)) "" else style$caption); 
-  param$style.title    = as.character(if (is.null(style$caption)) "background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;" else style$caption);
-  param$style.row      = as.vector(if (is.null(style$row)) "background-color:#999999;vertical-align:top;text-align:left;font-weight:bold;" else style$row);
-  param$style.col      = as.vector(if (is.null(style$col)) "background-color:#999999;vertical-align:top;text-align:right;font-weight:bold;min-width:60px;" else style$col);
-  param$style.logical  = as.matrix(if (is.null(style$logical)) c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;") else style$logical);
-  param$style.numeric  = as.matrix(if (is.null(style$numeric)) 
-    if (is.null(style$cell)) c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:right;") 
-    else style$cell
-    else style$numeric);
-  param$style.char     = as.matrix(if (is.null(style$char)) c("background-color:#CCCCCC; vertical-align:top; text-align:right;", "background-color:#FFFFFF; vertical-align:top; text-align:left;") else style$char);
-  param$format.title   = as.character(if (is.null(format$title)) "%s" else format$title);                             
-  param$format.row     = as.vector(if (is.null(format$row)) "%s" else format$row, "character");                             
-  param$format.col     = as.vector(if (is.null(format$col)) "%s" else format$col, "character");                             
-  param$format.logical = as.matrix(if (is.null(format$logical)) "%d" else format$logical);
-  param$format.numeric = as.matrix(if (is.null(format$numeric)) 
-    if (is.null(format$cell)) "%f" else format$cell
-    else format$numeric);
-  param$format.char    = as.matrix(if (is.null(format$char)) "\"%s\"" else format$char);
-  # format data                                    
-  cols   <- length(gd$data);
-  colv   <- 1:cols;
-  rows   <- length(gd$data[[1]]);
-  rowv   <- 1:rows;
-  output <-  ostyle <-matrix("", nrow=1+rows, ncol=1+cols);
-  ## title    
-  output[1,1] <- sprintf(param$format.title, param$title);
-  ostyle[1,1] <- param$style.title;
-  ## column headers
-  pos  <- recycle(colv, length(param$col));                     
-  posf <- recycle(colv, length(param$format.col)); 
-  poss <- recycle(colv, length(param$style.col));
-  output[1,1+colv] <- sprintf(param$format.col[posf], param$col[pos]);
-  ostyle[1,1+colv] <- param$style.col[poss];
-  ## row headers
-  pos  <- recycle(rowv, length(param$row));                     
-  posf <- recycle(rowv, length(param$format.row)); 
-  poss <- recycle(rowv, length(param$style.row));
-  output[1+rowv,1] <- sprintf(param$format.row[posf], param$row[pos]);
-  ostyle[1+rowv,1] <- param$style.row[poss];
-  ## table
-  for (i in colv) {
-    di   <- gd$data[[i]];
-    niv  <- 1:length(di);
-    typei <- typeof(di[1]);
-    if (typei=="logical") {
-      posf <- recycle(niv, nrow(param$format.logical));         
-      posi <- recycle(colv, ncol(param$format.logical))[i];         
-      output[1+rowv,i+1] <- sprintf(param$format.logical[posf,posi], di);    
-      poss <- recycle(niv, nrow(param$style.logical));   
-      posi <- recycle(colv, ncol(param$style.logical))[i];         
-      ostyle[1+rowv,i+1] <- param$style.logical[poss,posi];
-    } else if (typei=='character') {
-      posf <- recycle(niv, nrow(param$format.char));         
-      posi <- recycle(colv, ncol(param$format.char))[i];         
-      output[1+rowv,i+1] <- sprintf(param$format.char[posf,posi], di);    
-      poss <- recycle(niv, nrow(param$style.char));   
-      posi <- recycle(colv, ncol(param$style.char))[i];     
-      ostyle[1+rowv,i+1] <- param$style.char[poss,posi];     
-    } else if ((typei=='double')||(typei=='integer')) {
-      posf <- recycle(niv, nrow(param$format.numeric));         
-      posi <- recycle(colv, ncol(param$format.numeric))[i];        
-      output[1+rowv,i+1] <- sprintf(param$format.numeric[posf,posi], as.double(di));    
-      poss <- recycle(niv, nrow(param$style.numeric));   
-      posi <- recycle(colv, ncol(param$style.numeric))[i];      
-      ostyle[1+rowv,i+1] <- param$style.numeric[poss,posi];
-    } else stop(paste('unexpected data type "', typei, '"', sep=''));
+  attr(ret, "title")    <- list(value=title, fmt="%s", text_align="left", background_color=border, vertical_align="top", font_weight="bold")
+  attr(ret, "rownames") <- rows
+  attr(ret, "colnames") <- cols
+  attr(ret, "tr") <- vector("list", 1+length(rows))
+  attr(ret, "table") <- list()
+  structure(ret, dim=dim, class=c("html_matrix", class(ret)))
+}
+
+hm_pos <- function(nrow, ...) {
+  #browser()
+  args   <- list(...)
+  pos <- matrix(NA_integer_, nrow=nrow, ncol=length(args))
+  for (j in seq(args)) pos[,j] <- rep(1:length(args[[j]]), length.out=nrow) 
+  nargs <- names(args)
+  if (is.null(nargs)) nargs <- rep('', length(args))
+  nargs[nargs==''] <- 'value'
+  list(argpos=pos, nargs=nargs)
+}
+
+#' @rdname hm_cell
+#' @title hm_cell
+#' @aliases hm_index hm_row hm_col hm_title
+#' @description
+#' * `hm_cell` or `hm_index` modify a data cell format (`fmt="%s"`), value (unnamed parameter) or style (`text_align="left"`)
+#' * `hm_col` or `hm_row` modify a row or column format (`fmt="%s"`), value (unnamed parameter) or style (`text_align="left"`)
+#' @param x html_matrix object
+#' @param row integer: row(s) to access
+#' @param col integer: column(s) to access
+#' @param ind integer vector or matrix: access various (row and columns) elements (first column: row, second column: column)
+#' @param byrow logical: order indices by row or column (default: \code{FALSE})
+#' @param ... elements to change
+#'
+#' @md
+#' @return modified html_matrix object
+#' @export
+#'
+#' @examples
+#' l <- html_matrix(matrix(1:6, ncol=2))
+#' # replace l[1,1] by NA
+#' hm_cell(l, 1, 1, NA)
+#' # replace l[1,1] by NA and set the text_align to center
+#' hm_cell(l, 1, 1, NA, text_align="center")
+#' # replace l[1,3] and l[2,1] by NA
+#' rcind <- cbind(c(1,3), c(2, 1))
+#' hm_index(l, rcind, NA)
+#' # set a new title
+#' hm_title(l, "new title")
+#' # set a new row or column title
+#' hm_row(l, 2, "row 2")
+#' hm_col(l, 1, "col 1")
+#' # set fmt by column or row
+#' print(hm_cell(l, fmt=c("%.0f", "%.1f", "%.2f"), byrow=FALSE), which="fmt")
+#' print(hm_cell(l, fmt=c("%.0f", "%.1f"), byrow=TRUE), which="fmt")
+hm_cell  <- function(x, row=NULL, col=NULL, ..., byrow=FALSE) { 
+  #browser()
+  stopifnot("html_matrix" %in% class(x))
+  if (is.null(row)) row <- seq(nrow(x))
+  if (is.null(col)) col <- seq(ncol(x))
+  ind <- expand.grid(row, col)
+  ind <- if (byrow) ind[order(ind[,1], ind[,2]),] else ind[order(ind[,2], ind[,1]),]
+  hm_index (x, ind, ...)
+}
+
+#' @rdname hm_cell
+#' @export
+hm_index <- function(x, ind, ...)    {
+  stopifnot("html_matrix" %in% class(x))
+  stopifnot(length(dim(x))==2)
+  pos  <- hm_pos(nrow=nrow(ind), ...)
+  args <- list(...)
+  for (i in 1:nrow(ind)) {
+    for (j in seq(args)) {
+      x[[ind[i,1], ind[i,2]]][[pos$nargs[j]]] <- args[[j]][pos$argpos[i,j]]
+    }
   }
-  ## build text
-  if (is.null(type)) {
-    type <- "rout not found";
-    if (exists('rout', envir=.GlobalEnv)) type <- get('rout', envir=.GlobalEnv);
+  x
+}
+
+#' @rdname hm_cell
+#' @export
+hm_title <- function(x, ...) {
+  stopifnot("html_matrix" %in% class(x))
+  pos   <- hm_pos(nrow=1, ...)
+  args  <- list(...)
+  param <- attr(x, "title")
+  for (j in seq(args)) {
+    param[[pos$nargs[j]]] <- args[[j]][pos$argpos[1,j]]
   }
-  rows <- nrow(output);
-  cols <- ncol(output);
-  if (type=="html") {  
-    btable   <-  sprintf('<table style="%s">', param$style.table);
-    btr      <- "\n<tr>";
-    btd      <- "\n<td style=\"%s\">";
-    bcaption <- "\n<caption style=\"%s\">";
-    ecaption <- "</caption>";
-    etd      <- "</td>";
-    etr      <- "</tr>";
-    etable   <- "\n</table>\n";
+  attr(x, "title") <- param
+  x
+}    
+
+#' @rdname hm_cell
+#' @export
+hm_table <- function(x, ...) {
+  stopifnot("html_matrix" %in% class(x))
+  pos   <- hm_pos(nrow=1, ...)
+  args  <- list(...)
+  param <- attr(x, "table")
+  for (j in seq(args)) {
+    param[[pos$nargs[j]]] <- args[[j]][pos$argpos[1,j]]
   }
-  else if (type=="wiki") {
-    btable   <- sprintf('{| style="%s"', param$style.table);
-    btr      <- "\n|-";
-    btd      <- "\n| style=\"%s\" | ";
-    bcaption <- "\n|+ style=\"%s\" | ";
-    ecaption <- "";
-    etd      <- "";
-    etr      <- "";
-    etable   <- "\n|}\n";
+  attr(x, "table") <- param
+  x
+}    
+      
+#' @rdname hm_cell
+#' @export
+hm_row <- function(x, ind, ...)  {
+  stopifnot("html_matrix" %in% class(x))
+  pos   <- hm_pos(nrow=length(ind), ...)
+  args  <- list(...)
+  param <- attr(x, "rownames")
+  for (i in 1:length(ind)) {
+    for (j in seq(args)) {
+      param[[i]][[pos$nargs[j]]] <- args[[j]][pos$argpos[i,j]]
+    }
   }
-  else { 
-    btable   <- "\n";
-    btr      <- "";
-    btd      <- "";
-    bcaption <- "";
-    ecaption <- "\n";
-    etd      <- "";
-    etr      <- "\n";
-    etable   <- "\n";
-    maxlen   <- apply(nchar(output), 2, max);
-    for (i in 1:cols) output[,i] <- sprintf("% *s", 1+maxlen[i], output[,i])      
-    output[1,1] <- sprintf("%-*s", 1+maxlen[1], output[1,1])      
+  attr(x, "rownames") <- param
+  x
+}
+
+#' @rdname hm_cell
+#' @export
+hm_col <- function(x, ind, ...) {
+  stopifnot("html_matrix" %in% class(x))
+  pos   <- hm_pos(nrow=length(ind), ...)
+  args  <- list(...)
+  param <- attr(x, "colnames")
+  for (i in 1:length(ind)) {
+    for (j in seq(args)) {
+      param[[i]][[pos$nargs[j]]] <- args[[j]][pos$argpos[i,j]]
+    }
   }
-  # build output text
-  result <- btr;
-  for (i in 1:cols) result <- paste(result, sprintf(btd, ostyle[,i]), output[,i], etd, sep='');
-  result <- paste(paste(result, etr, sep=''), sep='', collapse="");
-  result <- paste(btable,  if (nchar(param$style.caption)) paste(result, sprintf(bcaption, param$style.caption), param$caption, ecaption, sep='') else "", result, etable, sep='');
-  result
+  attr(x, "colnames") <- param
+  x
+}
+
+#' @rdname hm_cell
+#' @export
+hm_tr <- function(x, ind, ...) {
+  stopifnot("html_matrix" %in% class(x))
+  pos   <- hm_pos(nrow=length(ind), ...)
+  args  <- list(...)
+  param <- attr(x, "tr")
+  for (i in 1:length(ind)) {
+    for (j in seq(args)) {
+      param[[i]][[pos$nargs[j]]] <- args[[j]][pos$argpos[i,j]]
+    }
+  }
+  attr(x, "tr") <- param
+  x
 }

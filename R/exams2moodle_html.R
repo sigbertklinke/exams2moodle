@@ -59,7 +59,7 @@ exams2moodle_html <- function(exam, name=NULL, pattern=".", mathjax=TRUE,
         }
       }
       img <- ''
-      if (png && endsWith(lst[i], ".png")) {
+      if (png && !is.na(lst[i]) && endsWith(lst[i], ".png")) {
         if (file.exists(lst[i])) img <- sprintf('<br><img src="data:image/png;base64,%s"></body>', base64enc::base64encode(lst[i]))
       } 
       ret <- c(ret, sprintf('<tr><td><div id="%s" width="100%%">%s%s</div></td>', nlst[i], lst[i], img))

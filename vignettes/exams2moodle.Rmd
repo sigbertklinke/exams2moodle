@@ -591,18 +591,21 @@ tab <- vec2mat(x, colnames=sprintf("%.0f-%0.f", 0:4, 1:5))
 as_table(tab)
 ```
 
-### `html_matrix`
+### `html_matrix`, `zebra`, `tooltip`, toHTML`
 
 Returns a HTML representation of a matrix as table. If you create exercises for Moodle then you can embed the HTML code in your exercise since it will be translated by `exams2moodle` to HTML, too. 
 
 ```{r}
 # Copy and paste program to console
+library("tools")
+library("magrittr")
 library("exams2moodle")
-x    <- matrix(1:12, ncol=3)
-tmp  <- tempfile(fileext=".html")
-html <- html_matrix(x)
-writeLines(html, tmp)
-if (interactive()) browseURL(paste0("file:/", tmp))
+x  <- matrix(1:12, ncol=3)
+hm <- html_matrix(x)
+toHTML(hm)
+hm <- html_matrix(x) %>% zebra() %>% 
+        tooltip(sprintf("Table has %.0f rows and %.0f columns", nrow(.), ncol(.)))
+toHTML(hm)
 ```
 
 With parameters the appearance of the table can be influenced:
