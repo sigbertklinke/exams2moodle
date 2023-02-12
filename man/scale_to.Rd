@@ -17,7 +17,7 @@ scale_to(x, mean = 0, sd = 1)
 rescaled data
 }
 \description{
-Rescales \code{x} such that for the rescaled data holds: \code{mean(scale_to(x, mean=target))==target} and 
+Rescales \code{x} such that for the rescaled data holds: \code{mean(scale_to(x, mean=target))==target} and
 \code{sd(scale_to(x, sd=target)==abs(target)}. A negative value of \code{sd} will change the sign of the \code{x} values.
 }
 \examples{

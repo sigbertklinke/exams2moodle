@@ -9,6 +9,7 @@
 #' \item{\code{pois}} Poisson distribution, parameters: \code{lambda}
 #' \item{\code{unif}} continuous uniform  distribution, parameters: \code{min}, \code{max}
 #' \item{\code{dunif}} discrete uniform  distribution, parameters: \code{min}, \code{max}
+#' \item{\code{dunif2}} continuous uniform  distribution, parameters: \code{min}, \code{max}
 #' \item{\code{exp}} exponential distribution, parameter: \code{rate}
 #' \item{\code{norm}} normal distribution, parameters: \code{mean}, \code{sd}
 #' \item{\code{lnorm}} log-normal distribution, parameters: \code{meanlog}, \code{sdlog}
@@ -53,6 +54,7 @@ distribution <- function(name, ...) UseMethod("distribution")
 #' @export
 distribution.default <- function(name, ..., discrete=NA) { 
   ret <- list(...)
+#  data("distributions", package="exams2moodle")
   ind   <- pmatch(name, distributions$r)
   if (is.na(ind)) {
     ret$name <- name
@@ -69,7 +71,7 @@ distribution.default <- function(name, ..., discrete=NA) {
 
 #' @rdname Distribution
 #' @param x distribution
-#' @param probs numeric: vector of probabilities with values in [0,1]. 
+#' @param probs numeric: vector of probabilities with values in \eqn{[0,1]}. 
 #' @export
 quantile.distribution <- function(x, probs=seq(0, 1, 0.25), ...) {
   fun       <- match.fun(paste0("q", x$name))
@@ -112,8 +114,9 @@ pmdf <- function(d, x, ...) {
 #' @param digits integer: number of digits used in \code{signif}
 #' @importFrom utils toLatex
 #' @export
-toLatex.distribution <- function(object, name=NULL, param=NULL, digits=3, ...) {
+toLatex.distribution <- function(object, name=NULL, param=NULL, digits=4, ...) {
   stopifnot("distribution" %in% class(object))
+#  data("distributions", package="exams2moodle")
   if (is.null(param)) param <- rep('', length(object)-1)
   if (is.null(name)) {
     ind <- which(distributions$r==object$name)
@@ -126,7 +129,8 @@ toLatex.distribution <- function(object, name=NULL, param=NULL, digits=3, ...) {
     }
   } else type <- name
   value  <- unlist(object[1:(length(object)-1)])
-  params <- paste0(param, ifelse(param=='',  '', '='), signif(value, digits), collapse=", ")
+  params <- ""
+  if (length(param)) params <- paste0(param, ifelse(param=='',  '', '='), signif(value, digits), collapse=", ")
   ret    <- if (endsWith(type, "_"))  paste0(type, "{", params, "}") else paste0(type, "(", params, ")")
   ret
 }
@@ -136,6 +140,7 @@ toLatex.distribution <- function(object, name=NULL, param=NULL, digits=3, ...) {
 is.distribution <- function(object, name=NULL) {
   ret <- "distribution" %in% class(object)
   if (!ret || is.null(name)) return(ret)
+#  data("distributions", package="exams2moodle")
   ind   <- pmatch(name, distributions$r)
   return(object$name==distributions$r[ind])
 } 

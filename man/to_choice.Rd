@@ -41,7 +41,7 @@ Otherwise a shuffle about all values is applied.
 The shuffling works in two steps:
 \enumerate{
 \item Sample within the correct and wrong value according to \code{shuffle}
-\item Apply shuffling (\code{order=NULL}) or ordering (default: \code{order=order}) of all selected answers 
+\item Apply shuffling (\code{order=NULL}) or ordering (default: \code{order=order}) of all selected answers
 }
 }
 \examples{

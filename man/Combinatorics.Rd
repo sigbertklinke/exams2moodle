@@ -5,21 +5,7 @@
 \alias{variation}
 \alias{combination}
 \alias{permutation}
-\title{Combinatorics
-
-* `permutation` computes the number of permutations
-* `variation` computes the number of variations with and without replication  
-* `combination` computes the number of combinatios with and without replication  
-* `combinatorics` computes all combinatorics results for k<n and returns it as list:
-\describe{
-\itemize{\code{permutation.n}}{\eqn{P(n)}}
-\itemize{\code{permutation.k}}{\eqn{P(k)}}
-\itemize{\code{permutation.nk}}{\eqn{P(n; k)}}
-\itemize{\code{variation}}{\eqn{V(n;k)}}
-\itemize{\code{variation.rep}}{\eqn{V^W(n;k)}}
-\itemize{\code{combination}}{\eqn{K(n;k)}}
-\itemize{\code{combination.rep}}{\eqn{K^W(n;k)}}
-}}
+\title{Combinatorics}
 \usage{
 combinatorics(n, k)
 
@@ -40,12 +26,11 @@ permutation(n, k = rep(1, n))
 a list
 }
 \description{
-Combinatorics
-
-* `permutation` computes the number of permutations
-* `variation` computes the number of variations with and without replication  
-* `combination` computes the number of combinatios with and without replication  
-* `combinatorics` computes all combinatorics results for k<n and returns it as list:
+\itemize{
+\item \code{permutation} computes the number of permutations
+\item \code{variation} computes the number of variations with and without replication
+\item \code{combination} computes the number of combinatios with and without replication
+\item \code{combinatorics} computes all combinatorics results for k<n and returns it as list:
 \describe{
 \itemize{\code{permutation.n}}{\eqn{P(n)}}
 \itemize{\code{permutation.k}}{\eqn{P(k)}}
@@ -54,6 +39,7 @@ Combinatorics
 \itemize{\code{variation.rep}}{\eqn{V^W(n;k)}}
 \itemize{\code{combination}}{\eqn{K(n;k)}}
 \itemize{\code{combination.rep}}{\eqn{K^W(n;k)}}
+}
 }
 }
 \examples{

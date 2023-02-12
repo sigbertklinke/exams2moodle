@@ -23,29 +23,29 @@ html_matrix(x, ...)
 
 \item{...}{further parameters}
 
-\item{byrow}{logical: create a row or column matrix if `x` is one-dimensional (default: \code{FALSE})}
+\item{byrow}{logical: create a row or column matrix if \code{x} is one-dimensional (default: \code{FALSE})}
 
-\item{numeric}{list: list of HTML style properties for a cell if `class(x[i,j])=="numeric"` (default: \code{list(text_align="right")})}
+\item{numeric}{list: list of HTML style properties for a cell if \code{class(x[i,j])=="numeric"} (default: \code{list(text_align="right")})}
 
-\item{integer}{list: list of HTML style properties for a cell if `class(x[i,j])=="integer"` (default: \code{list(text_align="right")})}
+\item{integer}{list: list of HTML style properties for a cell if \code{class(x[i,j])=="integer"} (default: \code{list(text_align="right")})}
 
-\item{char}{list: list of HTML style properties for a cell if `class(x[i,j])=="character"` (default: \code{list(text_align="left")})}
+\item{char}{list: list of HTML style properties for a cell if \code{class(x[i,j])=="character"} (default: \code{list(text_align="left")})}
 
-\item{logical}{list: list of HTML style properties for a cell if `class(x[i,j])=="logical"` (default: \code{list(text_align="right")})}
+\item{logical}{list: list of HTML style properties for a cell if \code{class(x[i,j])=="logical"} (default: \code{list(text_align="right")})}
 
 \item{border}{character: vector of background color for a border cell (default: \code{"#999999")})}
 }
 \value{
-`html_matrix` returns a html_matrix, `print` returns invisible a character matrix
+\code{html_matrix} returns a html_matrix, \code{print} returns invisible a character matrix
 }
 \description{
-Creates from a vector, matrix, array,  or table a HTML representation of it. The HTML representation has one column and row more 
+Creates from a vector, matrix, array,  or table a HTML representation of it. The HTML representation has one column and row more
 than the data. The additional row and column are used to have a title (top left), the column names (top), and the row names (left).
 
-You can set the style attributes (`<td style="...">`) via `hm_cell`, `hm_title`, `hm_col`, and `hm_row`. 
-For example: `hm_cell(hm, 1, 1, text_align="right")` will lead to (`<td style="text-align:right;">`) for the cell (1,1) and any
-unnamed element will change the cell value. 
-Note: since `-` is an operator in R, we use `_` instead. Of course, you could use `"text-align"="right"`, but I'am lazy.
+You can set the style attributes (\verb{<td style="...">}) via \code{hm_cell}, \code{hm_title}, \code{hm_col}, and \code{hm_row}.
+For example: \code{hm_cell(hm, 1, 1, text_align="right")} will lead to (\verb{<td style="text-align:right;">}) for the cell (1,1) and any
+unnamed element will change the cell value.
+Note: since \code{-} is an operator in R, we use \verb{_} instead. Of course, you could use \code{"text-align"="right"}, but I'am lazy.
 }
 \examples{
 m <- matrix(1:6, ncol=2)

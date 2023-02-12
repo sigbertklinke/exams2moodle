@@ -1,16 +1,20 @@
 #' @rdname NumberProperties
-#' @aliases divisor_25 is_terminal prime_numbers primes
-#' @title divisor_25, is_terminal 
+#' @aliases divisor_25 is_terminal prime_numbers primes is_integer, all_integer
+#' @title divisor_25, is_terminal, has_digits, all_integer, denominator_25, round_25
 #' @description 
-#' * `is_terminal` checks whether all `x`'s can be expressed as a terminal fraction, basically `all(divisor_25(denominator(x))))`
+#' * `is_terminal` checks whether `x`'s can be expressed as a terminal fraction, basically `divisor_25(denominator(x)))`
 #' * `divisor_25` checks all `x`'s can be expressed as \eqn{2^x 5^y}
 #' * `prime_numbers` returns all prime numbers up to a limit
 #' * `primes` prime factorization of `x`, returns a matrix with the power for each prime number
+#' * `has_digits` checks whether the `x`'s have only \code{digits} after the decimal point, basically `abs(x-round(x, digits))<tol`
+#' * `all_integer` checks whether all `x`'s are integer, basically `all(has_digits(x,0))`
 #' 
 #' @param x numeric: values to test/check
 #' @param n integer: find all prime numbers up to n
 #' @param sieve logical: should in any case the Sieve of Eratosthenes be used to compute prime numbers (default: \code{FALSE})
 #' @param min integer: minimal prime number used (default: \code{2})
+#' @param digits numeric: number of digits to check (default: \code{2})
+#' @param tol numeric: max. deviation from the rounded `x` (default: \code{1e-6})
 #' 
 #' @md
 #' @return logical
@@ -36,17 +40,66 @@ divisor_25 <- function(x) {
 
 #' @rdname NumberProperties
 #' @export
+denominator_25 <- function(x) {
+  fracs <- if ('fractions' %in% class(x)) x else fractions(x)
+  txt   <- strsplit(attr(fracs, "fracs"), "/", fixed=TRUE)
+  denom <- sapply(txt, function(e) { 
+    r <- 1
+    if (length(e)>1) { 
+      r <- as.integer(e[2]) 
+      if (is.na(r)) {
+        r <- as.numeric(e[2])
+        if (is.na(r)) stop(sprintf("can not convert '%s' to integer or numeric", e[2]))
+      }
+    }
+    r
+  })
+  twofive <- matrix(0, nrow=length(denom), ncol=3, dimnames = list(1:length(x), c("by2", "by5", "rem")))  
+  repeat {
+    by2 <- (denom%%2)==0
+    by5 <- (denom%%5)==0
+    twofive[,1:2] <- twofive[,1:2]+cbind(by2, by5)
+    denom[by2] <- denom [by2]%/%2
+    denom[by5] <- denom [by5]%/%5
+    if (all(!by2, !by5)) break
+  }
+  twofive[,3] <- denom
+  round(twofive, 0)
+}
+
+#' @rdname NumberProperties
+#' @export
 is_terminal <- function(x) {
   fracs <- if ('fractions' %in% class(x)) x else fractions(x)
   txt   <- strsplit(attr(fracs, "fracs"), "/", fixed=TRUE)
-  denom <- sapply(txt, function(e) { if (length(e)>1) as.integer(e[2]) else 1})
-  all(divisor_25(denom))
-#    sdenom <- sum(denom)
-#    denom  <- ifelse(denom%%2==0, denom/2, denom)
-#    denom  <- ifelse(denom%%5==0, denom/5, denom)
-#    if (sum(denom)==sdenom) return(all(denom==1))
-#  }
-#  return(TRUE) 
+  denom <- sapply(txt, function(e) { 
+    r <- 1
+    if (length(e)>1) { 
+      r <- as.integer(e[2]) 
+      if (is.na(r)) {
+        r <- as.numeric(e[2])
+        if (is.na(r)) stop(sprintf("can not convert '%s' to integer or numeric", e[2]))
+      }
+    }
+    r
+  })
+  divisor_25(denom)
+  #    sdenom <- sum(denom)
+  #    denom  <- ifelse(denom%%2==0, denom/2, denom)
+  #    denom  <- ifelse(denom%%5==0, denom/5, denom)
+  #    if (sum(denom)==sdenom) return(all(denom==1))
+  #  }
+  #  return(TRUE) 
+}
+
+#' @rdname NumberProperties
+#' @export
+round_25 <- function(x) {
+  d25 <- denominator_25(x)
+  dig <- max(ceiling(log10(max(2^d25[,1]*5^d25[,2]))))
+  ret <- rep(NA, length(x))
+  ret[d25[,3]==1] <- round(x[d25[,3]==1], dig)
+  ret
 }
 
 #' @rdname NumberProperties
@@ -88,4 +141,16 @@ primes <- function(x, min=2) {
     }
   }
   return(ret)
+}
+
+#' @rdname NumberProperties
+#' @export
+has_digits <- function(x, digits=2, tol=10^{-digits-6}) {
+  abs(x-round(x, digits))<tol
+}
+
+#' @rdname NumberProperties
+#' @export
+all_integer <- function(x) {
+  isTRUE(all(abs(x-round(x, 0))<1e-9))
 }

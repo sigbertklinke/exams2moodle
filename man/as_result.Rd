@@ -31,7 +31,7 @@ digits(x)
 a list with original and rounded value, digits used and tolerance
 }
 \description{
-Rounds \code{x} according to \code{digits}, \code{FUN} and sets a tolerance for the result. 
+Rounds \code{x} according to \code{digits}, \code{FUN} and sets a tolerance for the result.
 If the tolerance not given it is the maximum of \code{2*10^(-digits)}.
 }
 \examples{

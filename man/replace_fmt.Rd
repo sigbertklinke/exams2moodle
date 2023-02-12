@@ -17,9 +17,11 @@ replace_fmt(txt, digits = 2L, ...)
 character with replaced names
 }
 \description{
-Replaces in a text names with 
-* values which are formatted with [exams::fmt()], or
-* strings.
+Replaces in a text names with
+\itemize{
+\item values which are formatted with \code{\link[exams:fmt]{exams::fmt()}}, or
+\item strings.
+}
 }
 \examples{
 replace_fmt("\\\\frac{x}{y}", x=2, y=3)

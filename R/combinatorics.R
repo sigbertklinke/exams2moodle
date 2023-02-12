@@ -1,6 +1,6 @@
 #' @rdname Combinatorics
 #' @title Combinatorics
-#'
+#' @description
 #' * `permutation` computes the number of permutations
 #' * `variation` computes the number of variations with and without replication  
 #' * `combination` computes the number of combinatios with and without replication  

@@ -25,6 +25,13 @@ math  <- function(txt) {
 }
 
 #' @rdname affix
+#' @description \code{bracket} adds a \code{(} as prefix and \code{)} as suffix to a (character) vector.
+#' @export
+bracket <- function(txt) { 
+  affix(txt, '(', ')') 
+}
+
+#' @rdname affix
 #' @description \code{unaffix} deletes a pre- and/or suffix to a (character) vector.
 #' @export
 unaffix  <- function(txt, prefix='', suffix='')  { 

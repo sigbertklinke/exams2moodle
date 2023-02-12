@@ -16,11 +16,11 @@ histwidth(from, to, widths, dmax = 100)
 \item{dmax}{numeric: max. denominator value}
 }
 \value{
-a list with `breaks`, `n`'s for each class and `decimal` if all densities are terminating decimals
+a list with \code{breaks}, \code{n}'s for each class and \code{decimal} if all densities are terminating decimals
 }
 \description{
-Creates a set of breaks and absolute frequencies in the range from `from` to `to`. The class widths are 
-sampled from `widths`. The resulting numbers could be multiplied with an integer if the `sum(n)` is too small.
+Creates a set of breaks and absolute frequencies in the range from \code{from} to \code{to}. The class widths are
+sampled from \code{widths}. The resulting numbers could be multiplied with an integer if the \code{sum(n)} is too small.
 Additionally is checked if the densities generated are terminating decimals.
 }
 \examples{

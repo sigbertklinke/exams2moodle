@@ -17,8 +17,8 @@ ddiscrete(x, unit = NULL, zero = FALSE)
 a discrete probability function
 }
 \description{
-Creates a discrete probability function based on \code{x} with resolution \code{unit}. 
-If \code{unit} is not given then unit will be 10, 100, 1000, ... depending 
+Creates a discrete probability function based on \code{x} with resolution \code{unit}.
+If \code{unit} is not given then unit will be 10, 100, 1000, ... depending
 on the length of the discrete probability function.
 }
 \examples{

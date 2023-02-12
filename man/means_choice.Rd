@@ -24,9 +24,9 @@ means(x, digits, na.rm = TRUE, trim = 0.2, winsor = 0.2)
 a list with mean values
 }
 \description{
-Computes mean's of \code{x}. The list returned has an attribute \code{"mindiff"} which contains 
+Computes mean's of \code{x}. The list returned has an attribute \code{"mindiff"} which contains
 the smallest distance between two mean values before rounding.
-If \code{winsor} and/or \code{trim} set to \code{NA} then the trimmed and/or winsorized mean are not computed. 
+If \code{winsor} and/or \code{trim} set to \code{NA} then the trimmed and/or winsorized mean are not computed.
 Currently are implemented
 \describe{
 \item{\code{mean}}{arithmetic mean}

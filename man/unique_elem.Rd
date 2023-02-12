@@ -15,7 +15,7 @@ unique_elem(x, elem = NULL)
 reduced hyperloop object
 }
 \description{
-Deletes all elements from a hyperloop object that are identical. 
+Deletes all elements from a hyperloop object that are identical.
 Since the result in each run can be a list itself, only specific list elements can be used for comparison.
 }
 \examples{

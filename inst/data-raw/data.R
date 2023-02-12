@@ -1,3 +1,5 @@
 library("rio")
 distributions <- import("distributions.xlsx")
 save(distributions, file="../../data/distributions.rda", version=2)
+skalenniveau  <- import("skalenniveau.xlsx", col_names=c("name", "type"))
+save(skalenniveau, file="../../data/skalenniveau.rda", version=2)

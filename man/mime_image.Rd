@@ -13,7 +13,7 @@ mime_image(filename)
 character
 }
 \description{
-Returns the MIME type of an image based on the filename extension. 
+Returns the MIME type of an image based on the filename extension.
 If a MIME type for a file extension is not found then the extension itself will be returned.
 }
 \examples{

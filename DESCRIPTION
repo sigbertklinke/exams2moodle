@@ -1,30 +1,33 @@
 Package: exams2moodle
 Type: Package
 Title: Access routines to XML Moodle files and helper routines to simplify generating exercises for Moodle from the 'exams' package
-Version: 1.0.9
-Date: 2021-09-15
+Version: 1.0.10
+Date: 2021-12-14
 Authors@R: person("Sigbert", "Klinke", email="sigbert@hu-berlin.de", role=c("aut", "cre"))
 Description: The R package exams by Zeileis, Grün et al. supports the creation of assignments for many different systems including Moodle. The packages facilitates the creation of the tasks, the creation of suitable data sets and the transfer of the tasks in Moodle. It includes functions for generating univariate and bivariate data, functions for theoretical distributions including approximation conditions, functions to support the display in HTML (Moodle), general functions for generating tasks, and functions for manipulating XML task files for Moodle.
 License: GPL-3
-RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
 LazyData: true
-Suggests:
-  tools
+Depends:
+  tools,
+  polynom
 Imports:
-  magrittr,
-  methods, 
-  exams,
-  utils,
-  base64enc,
-  MASS,
   extraDistr,
-  stringr,
-  psych,
-  xtable,
+  exams,
   knitr,
+  MASS,
+  methods, 
+  magrittr,
+  psych,
   rjson,
-  tinytex,
   rmarkdown,
+  spelling,
+  stringdist,
+  stringr,
+  tinytex,
+  utils,
+  xtable,
   yaml
 Encoding: UTF-8
 VignetteBuilder: knitr
+RoxygenNote: 7.2.3

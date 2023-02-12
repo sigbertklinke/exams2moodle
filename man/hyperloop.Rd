@@ -4,15 +4,17 @@
 \alias{hyperloop}
 \title{hyperloop}
 \usage{
-hyperloop(FUN, ...)
+hyperloop(FUN, ..., .simplify = FALSE)
 }
 \arguments{
 \item{FUN}{function with named parameter(s)}
 
 \item{...}{named parameters which contain lists with possible parameter values}
+
+\item{.simplify}{logical: should the result be simplified to a data frame if possible? (default: \code{FALSE})}
 }
 \value{
-a hyperloop object
+a hyperloop object as list
 }
 \description{
 Runs a function several times with all parameter combinations:

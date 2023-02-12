@@ -5,15 +5,34 @@
 \alias{is_terminal}
 \alias{prime_numbers}
 \alias{primes}
-\title{divisor_25, is_terminal}
+\alias{is_integer,}
+\alias{all_integer}
+\alias{denominator_25}
+\alias{round_25}
+\alias{has_digits}
+\title{divisor_25, is_terminal, has_digits, all_integer, denominator_25, round_25}
 \usage{
 divisor_25(x)
 
+denominator_25(x)
+
 is_terminal(x)
+
+round_25(x)
 
 prime_numbers(n, sieve = FALSE)
 
 primes(x, min = 2)
+
+has_digits(
+  x,
+  digits = 2,
+  tol = 10^{
+     -digits - 6
+ }
+)
+
+all_integer(x)
 }
 \arguments{
 \item{x}{numeric: values to test/check}
@@ -23,16 +42,22 @@ primes(x, min = 2)
 \item{sieve}{logical: should in any case the Sieve of Eratosthenes be used to compute prime numbers (default: \code{FALSE})}
 
 \item{min}{integer: minimal prime number used (default: \code{2})}
+
+\item{digits}{numeric: number of digits to check (default: \code{2})}
+
+\item{tol}{numeric: max. deviation from the rounded \code{x} (default: \code{1e-6})}
 }
 \value{
 logical
 }
 \description{
 \itemize{
-\item \code{is_terminal} checks whether all \code{x}'s can be expressed as a terminal fraction, basically \verb{all(divisor_25(denominator(x))))}
+\item \code{is_terminal} checks whether \code{x}'s can be expressed as a terminal fraction, basically \verb{divisor_25(denominator(x)))}
 \item \code{divisor_25} checks all \code{x}'s can be expressed as \eqn{2^x 5^y}
 \item \code{prime_numbers} returns all prime numbers up to a limit
 \item \code{primes} prime factorization of \code{x}, returns a matrix with the power for each prime number
+\item \code{has_digits} checks whether the \code{x}'s have only \code{digits} after the decimal point, basically \code{abs(x-round(x, digits))<tol}
+\item \code{all_integer} checks whether all \code{x}'s are integer, basically \code{all(has_digits(x,0))}
 }
 }
 \examples{

@@ -22,13 +22,13 @@ a list with the input parameters and
 \item \code{acceptance0} acceptance interval for H0
 \item \code{acceptance0x} acceptance interval for H0 in x range
 \item \code{accept1} is H1 accepted?
-\item \code{p.value} p value for test
-\item \code{alphaexact} exact signifinance level
+\item \code{p.value} p value for test (note: the p-value may not be reliable see Notes!)
+\item \code{alphaexact} exact significance level
 \item \code{stderr} standard error of the proportion used as denominator
 }
 }
 \description{
-Computes all results for test on proporrtion using either \code{\link[stats:binom.test]{stats::binom.test()}} or
+Computes all results for test on proportion using either \code{\link[stats:binom.test]{stats::binom.test()}} or
 a normal approximation without continuity correction.
 Either named parameters can be given or a \code{arglist} with the parameters.
 \itemize{
@@ -37,14 +37,16 @@ Either named parameters can be given or a \code{arglist} with the parameters.
 \item \code{pi0} true value of the proportion (default: \code{0.5})
 \item \code{alternative} a string specifying the alternative hypothesis (default: \code{"two.sided"}), otherwise \code{"greater"} or \code{"less"} can be used
 \item \code{alpha} significance level (default: \code{0.05})
-\item \code{binom2norm} can the binomial distribution apprxoimated by the normal distributions (default: \code{NA} = use \code{binom2norm} function)
+\item \code{binom2norm} can the binomial distribution approximated a normal distribution (default: \code{NA} = use \code{binom2norm} function)
 }
 }
 \details{
-The results of \code{ttest_num} may differ from \code{\link[stats:t.test]{stats::t.test()}}. \code{ttest_num} is designed to return results
-when you compute a t test by hand. For example, for computing the test statístic the approximation \eqn{t_n \approx N(0; 1)}
-is used if \eqn{n>n.tapprox}. The \code{p.value} is computed from the cumulative distribution function of the normal or
-the t distribution.
+The results of \code{proptest_num} may differ from \code{\link[stats:binom.test]{stats::binom.test()}}. \code{proptest_num} is designed to return results
+when you compute a binomial test by hand. For example, for computing the test statístic the approximation \eqn{t_n \approx N(0; 1)}
+is used if \eqn{n>n.tapprox}. The \code{p.value} is computed by \link[stats:binom.test]{stats::binom.test} and may not be reliable, for Details see Note!
+}
+\note{
+The computation of a p-value for non-symmetric distribution is not well defined, see \url{https://stats.stackexchange.com/questions/140107/p-value-in-a-two-tail-test-with-asymmetric-null-distribution}.
 }
 \examples{
 n <- 100

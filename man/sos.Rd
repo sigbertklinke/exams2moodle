@@ -9,7 +9,7 @@
 \alias{sos1000}
 \title{Precomputed sum of squares data}
 \format{
-For each line of a matrix holds \eqn{\sum_{i=1}^k x_i^2=n} and \eqn{\sum_{i=1}^k x_i=0}. 
+For each line of a matrix holds \eqn{\sum_{i=1}^k x_i^2=n} and \eqn{\sum_{i=1}^k x_i=0}.
 It contains all integer solutions up to \code{k<=10}. A \code{NA} means that this entry is not used.
 
 An object of class \code{matrix} (inherits from \code{array}) with 2433 rows and 10 columns.

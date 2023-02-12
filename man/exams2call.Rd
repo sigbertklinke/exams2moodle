@@ -13,7 +13,7 @@ exams2call(prefix = "exams2")
 a list with the function name and its evaluated parameters
 }
 \description{
-Returns a list with the function name and parameters called from the \code{.traceback()}. 
+Returns a list with the function name and parameters called from the \code{.traceback()}.
 The function name must start with \code{"exams2"}
 }
 \examples{

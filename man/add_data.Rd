@@ -22,16 +22,16 @@ a data vectors with new values
 Adds data values to a given data vector \code{x}.
 }
 \details{
-Based on the data \code{x} or the \code{range(box)} a box is computed. 
-The length aof the box gives the multiplier for the \code{range}. 
+Based on the data \code{x} or the \code{range(box)} a box is computed.
+The length aof the box gives the multiplier for the \code{range}.
 Then a left and right interval from which the additional values are drawn uniformly is computed:
 \eqn{[left box value-range[2]*box length; left box value-range[1]*box length]} (left interval) and
 \eqn{[right box value+range[1]*box length; right box value+range[2]*box length]} (right interval).
 
-For \code{box} can be used also \code{"boxplot"} and \code{quantile(x, c(0.25, 0.75), na.rm=TRUE)} is used or 
+For \code{box} can be used also \code{"boxplot"} and \code{quantile(x, c(0.25, 0.75), na.rm=TRUE)} is used or
 \code{"range"} and \code{range(x, na.rm=TRUE)} is used.
 
-\code{n} can be a single number which will add \code{n} data values at the right side of \code{x}. 
+\code{n} can be a single number which will add \code{n} data values at the right side of \code{x}.
 If \code{n} is a vector of length two then \code{n[1]} data values will be added at the left side of \code{x} and
 \code{n[2]} data values will be added at the right side of \code{x}.
 }

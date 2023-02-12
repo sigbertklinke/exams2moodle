@@ -33,12 +33,13 @@ given for \code{mean}, \code{sd} and \code{n} will be overwritten. Also either \
 \itemize{
 \item \code{x} sample (default: \code{numeric(0)})
 \item \code{mean} sample mean (default: \code{mean(x)})
-\item \code{n} sample size (default: \code{sd(x)})
-\item \code{sd} sample standard deviation (default: \code{length(x)})
+\item \code{n} sample size (default: \code{length(x)})
+\item \code{sd} sample standard deviation (default: \code{sd(x)})
 \item \code{sigma} population standard deviation (default: \code{NA} = unknown)
 \item \code{mu0} true value of the mean (default: \code{0})
 \item \code{alternative} a string specifying the alternative hypothesis (default: \code{"two.sided"}), otherwise \code{"greater"} or \code{"less"} can be used
 \item \code{alpha} significance level (default: \code{0.05})
+\item \code{norm} is population normal distributed  (default: \code{FALSE})
 \item \code{n.clt} when central limit theorem holds (default: \code{getOption("n.clt", 30)})
 \item \code{t2norm} does the approxmation \eqn{t_n \approx N(0;1)} hold? \verb{(default: }NA\verb{= use}t2norm` function)
 }

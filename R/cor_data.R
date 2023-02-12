@@ -65,7 +65,7 @@ cor_data <- function(x, y, r, method=c("pearson", "kendall", "spearman"), ..., m
     row.names(m) <- c("$x_i$", "$y_i$", "$rank(x_i)$", "$rank(y_i)$", "$d_i^2$")
   }
   if (args$method=="kendall") {
-    xys <- xy[order(xy[,1], )]
+    xys <- xy[order(xy[,1]),]
     m   <- rbind(t(xys), rowSums(outer(xys[,1], xys[,1], "<") & outer(xys[,2], xys[,2], "<")),
                  rowSums(outer(xys[,1], xys[,1], "<") & outer(xys[,2], xys[,2], ">")))
     row.names(m) <- c("$x_i$", "$y_i$", "$p_i$", "$q_i$")

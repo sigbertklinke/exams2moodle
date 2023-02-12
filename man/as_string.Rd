@@ -2,12 +2,20 @@
 % Please edit documentation in R/as_string.R
 \name{as_string}
 \alias{as_string}
+\alias{as_obs,}
+\alias{as_sum,}
+\alias{as_fraction}
+\alias{as_sum}
 \alias{as_obs}
 \title{as_string}
 \usage{
 as_string(txt, collapse = ", ", last = ", and ")
 
+as_sum(txt)
+
 as_obs(txt, name = "x", sorted = FALSE, ...)
+
+as_fraction(val, latex = FALSE, sorted = FALSE, ...)
 }
 \arguments{
 \item{txt}{vector: (character) vector to merge}
@@ -21,6 +29,10 @@ as_obs(txt, name = "x", sorted = FALSE, ...)
 \item{sorted}{logical: sorted observations or not (default: \code{FALSE})}
 
 \item{...}{further given from \code{as_obs} to \code{as_string}}
+
+\item{val}{numeric: values to convert into fractions}
+
+\item{latex}{logical use latex \code{\\frac{.}{.}} or not (default: \code{FALSE})}
 }
 \value{
 a string
@@ -39,4 +51,11 @@ as_string(as.character(y))
 #
 as_obs(x)
 as_obs(sort(x), sorted=TRUE)
+#
+x <- round(runif(5), 2)
+as_fraction(x)
+as_fraction(x, TRUE)
+#
+y <- round(runif(5), 2)
+as_sum(x)
 }

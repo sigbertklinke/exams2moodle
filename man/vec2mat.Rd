@@ -19,7 +19,7 @@ vec2mat(x, colnames = NULL, rownames = NULL, horizontal = TRUE)
 matrix
 }
 \description{
-Converts a vector horizontal or vertical matrix and sets row- or colnames. 
+Converts a vector horizontal or vertical matrix and sets row- or colnames.
 If \code{rownames} or \code{colnames} are given then existing row names or column names are overwritten.
 }
 \examples{

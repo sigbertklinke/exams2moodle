@@ -7,14 +7,16 @@
 #' @inheritParams graphics::hist
 #' @param x numeric data or histogram data
 #' @param probs numeric: probabilities to use if `breaks="Quantile"` (default: `seq(0, 1, 0.25)`)
-#' @param ... further parameter used in [graphics::hist()] 
+#' @param ... further parameter used in [graphics::hist] 
 #'
-#' @return like in [graphics::hist()] with the additional list elements
+#' @return like in [graphics::hist] with the additional list elements
 #' * `lower` lower class borders,
 #' * `upper` upper class borders, 
 #' * `width` class widths,
 #' * `relfreq` the relative class frequency,
-#' #'`cumfbrk` the cumulated relative frequency at the `breaks`,
+#' * `cumfbrk` the cumulated relative frequency at the `breaks`,
+#' * `maxdens` the indices of the maximal `density` values,
+#' * `maxcount` the indices of the maximal `count` values
 #' * `x` the original finite data, and
 #' * `class` the class number for each value in `x`.
 #' 
@@ -44,15 +46,17 @@ histdata <- function(x, breaks="Sturges", probs=seq(0, 1, 0.25), ...) {
   args$plot   <- FALSE
   ret <- do.call("hist", args)
   stopifnot((min(ret$breaks)<=min(x)) && (max(ret$breaks)>=max(x))) # check if breaks cover the data
-  ret$width   <- as.numeric(diff(ret$breaks))
-  ret$x       <- x
-  ret$xname   <- xname
-  ret$mids    <- as.numeric(ret$mids)
-  ret$relfreq <- ret$counts/sum(ret$counts)
-  ret$cumfbrk <- c(0, ret$relfreq)
-  ret$class   <- findInterval(ret$x, ret$breaks, left.open=args$right, all.inside = TRUE)
-  ret$lower   <- as.numeric(ret$breaks[-length(ret$breaks)])
-  ret$upper   <- as.numeric(ret$breaks[-1])
+  ret$width    <- as.numeric(diff(ret$breaks))
+  ret$x        <- x
+  ret$xname    <- xname
+  ret$mids     <- as.numeric(ret$mids)
+  ret$relfreq  <- ret$counts/sum(ret$counts)
+  ret$cumfbrk  <- c(0, ret$relfreq)
+  ret$class    <- findInterval(ret$x, ret$breaks, left.open=args$right, all.inside = TRUE)
+  ret$lower    <- as.numeric(ret$breaks[-length(ret$breaks)])
+  ret$upper    <- as.numeric(ret$breaks[-1])
+  ret$maxdens  <- which(ret$density==max(ret$density))
+  ret$maxcount <- which(ret$count==max(ret$count))
   ret
 }
 

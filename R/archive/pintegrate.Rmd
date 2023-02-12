@@ -1,0 +1,31 @@
+### `pintegrate`
+
+`pintegrate` integrates about a finite interval a polynomial function multiplied with a power of `x`. The density is defined as
+
+$f(x) = \begin{cases} (c_q x^q + c_{q-1} x^{q-1} + \ldots + c_0) x^p dx & \text{ for } a\leq x\leq b\\
+0                                               & \text{ otherwise}\end{cases}$
+  
+  An example:
+  
+  ```{r}
+# f(x)= x^2/4+x/6+10/12 for 0 <= x <= 1, 
+#              0        otherwise
+p   <- polynomial(10/12, 1/6, 1/4)
+res <- pintegrate(p, c(0, 1), 0:2)
+# Is density?
+equal(res[1], 1)
+# expectation
+res[2]
+# variance
+res[3]-res[2]^2
+```
+
+### `vec2mat`
+
+Converts a vector to a row- or colum matrix.
+
+```{r}
+x <- runif(5)
+vec2mat(x)
+vec2mat(x, horizontal=FALSE)
+```

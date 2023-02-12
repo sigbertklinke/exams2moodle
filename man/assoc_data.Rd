@@ -33,15 +33,15 @@ assoc_data(
 a modified frequency table
 }
 \description{
-Given a frequency table the function reorders the observations such that the given `target` association will be approximated and the marginal
-frequencies are unchanged. Note that the `target` association may not be reached!
+Given a frequency table the function reorders the observations such that the given \code{target} association will be approximated and the marginal
+frequencies are unchanged. Note that the \code{target} association may not be reached!
 \code{zero} allows for zero entries in the common distribution.
 If \code{target} is \code{NA} then the table is simply returned. \code{FUN} computes the association (or correlation) measure based on a
 frequency table. \code{tol} gives the maximal deviation of the association (or correlation) measure
 and the \code{target} value. \code{maxit} limits the number of steps.
 Note that a solution is not guaranteed, especially for extreme values for \code{target}, for example
 for +1 or -1 or values nearby.
-If \code{attr(joint, "iterations")==maxit} then you need either to increase \code{maxit}, to decrease \code{tol} or 
+If \code{attr(joint, "iterations")==maxit} then you need either to increase \code{maxit}, to decrease \code{tol} or
 to check if you have choosen an appropriate \code{target} value (for a nominal measure in \eqn{0 <= target <= 1}, for ordinal measure in \eqn{-1 <= target <= +1}).
 \code{attr(joint, "target")} contains the achieved association.
 }

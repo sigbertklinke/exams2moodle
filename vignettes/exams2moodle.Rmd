@@ -22,7 +22,9 @@ knitr::opts_chunk$set(
 library("exams2moodle")
 ```
 
-## Creating exercises 
+## Example tasks
+
+### Introduction
 
 If you are generate exercise for a student you usually encounter two problems:
 
@@ -31,8 +33,7 @@ If you are generate exercise for a student you usually encounter two problems:
 
 The second problem just requires the extension of the existing routines.
 
-You can encounter problem 1 only if the students are not allowed to use computers to solve the exercises. Personally
-I believe that students only understand a statistical coefficient or graphic if they are able to calculate the required value(s) by hand; it is like learning the times tables by heart with pupils. Otherwise most of them will be just random button pushers in the future.
+You can encounter problem 1 only if the students are not allowed to use computers to solve the exercises. Personally I believe that students only understand a statistical coefficient or graphic if they are able to calculate the required value(s) by hand; it is like learning the times tables by heart with pupils. Otherwise most of them will be just random button pushers in the future.
 
 To solve the problems I decided to generate appropriate (full) data sets such that I have control over it. The general approach is
 
@@ -59,7 +60,102 @@ repeat {
 x
 ```
 
-### Rounding: - `fractions`, `is_terminal`
+### Level or measurement - `to_choice`
+
+For determining the correct level of measurement of a variable we use an Excel file with two columns with the name of the variable and the level of measurement.
+
+```{r}
+# subset of variables we use, variable names are in German  
+data("skalenniveau")
+skalen <- c("nominal", "ordinal", "metrisch")
+stopifnot(all(skalenniveau$type %in% skalen))  # protect against typos
+skala  <- sample(skalenniveau$type, 1)
+exvars <- sample(nrow(skalenniveau), 8)
+tf     <- (skalenniveau$type[exvars]==skala)
+sc     <- to_choice(skalenniveau$name[exvars], tf)
+# Additional answer: Does none fit?
+sc$questions <- c(sc$questions, "Keine der Variablen hat das gewünschte Skalenniveau") 
+sc$solutions <- c(sc$solutions, !any(tf))                                              
+sc
+```
+
+The [`to_choice`](../html/to_choice.html) function generates a object such that can be used in [`answerlist`](../../exams/html/answerlist.html) and [`mchoice2string`](../../exams/html/mchoice2string.html) . The first parameter is either a vector or data frame. The second parameter is a logical vector containing `TRUE` if the element in the vector (or row in the data frame) contains a true answer. 
+
+The parameter `shuffle` samples from the correct and false answers. The following example could replace the main code from the example above.
+
+```{r}
+# subset of variables we use, variable names are in German  
+data("skalenniveau")  
+skalen <- c("nominal", "ordinal", "metrisch")
+skala  <- sample(skalenniveau$type, 1)
+exvars <- sample(nrow(skalenniveau), 8)
+tf     <- (skalenniveau$type[exvars]==skala)
+# select one true and four false answers
+sc     <- to_choice(skalenniveau$name[exvars], tf, shuffle=c(1,4))
+sc
+```
+
+By default the answers are ordered, the parameter `order` which function is used to order the answers (default: `order`). To use the ordering given set `order=NULL`.
+
+### Descriptive statistics: mean - `means_choice`, `to_choice`
+
+[`means_choice`](../html/means_choice.html) computes a list of mean values for a given data vector `x`:
+
+* arithmetic mean,
+* median,
+* harmonic mean,
+* geometric mean,
+* (first) mode,
+* trimmed mean, and
+* winsorized mean.
+
+If the parameter `trim` and/or `winsor` set to `NA` then these means will not be computed.
+
+```{r}
+digits <- 2  # round to two digits
+repeat {
+  x  <- round(runif(7, min=165, max=195), digits)
+  ms <- means_choice(x, digits)         
+  if (attr(ms, "mindiff")>0.1) break   # make sure that all values are different by 0.1
+}
+ms <- unlist(ms)
+sc <- to_choice(ms, names(ms)=='mean') # arithmetic mean is the correct solution
+str(sc)
+```
+
+The attribute `mindiff` gives the minimal distance between two mean values. This might be important for setting  `extol` the tolerance for numeric solutions. 
+
+### Descriptive statistics: arithmetic mean - `num_result`
+
+For computing the arithmetic mean we just need to ensure that data are rounded to a certain level since the computation with pocket calculator is simple.
+
+```{r}
+library("exams2moodle")
+n    <- sample(4:8, size=1)
+x    <- round(runif(n, min=1.65, max=1.85), 2)
+sc   <- num_result (c(mean(x), x), digits = 2, tolmult = 2)
+```
+
+The function [`num_result`](../html/num_result.html) creates a list with the elements
+
+* `x` the original values,
+* `fx` the rounded values with `fmt` function from the `exams` package as character,
+* `tolerance` the tolerance for `extol`, and
+* `digits` the digits used for rounding.
+
+The tolerance is computed as `tolmult*10^(-digits)`.
+
+### Statistical inference: Continuous random variables 
+
+
+
+
+
+## General assistance functions
+
+### Rounding
+
+#### `fractions`, `is_terminal`
 
 To overcome the rounding problem there is a simple approach: try to use (terminal) fractions. A terminal fraction generates a number with a finite number of digits, for example $\frac{1}{10}=0.1$. 
 
@@ -79,22 +175,55 @@ x <- c(1/5, 1/6)
 is_terminal(x)
 ```
 
-Unfortunately we use a decimal numeral system limiting the number possible of denominators which lead to terminal numbers; the ancient babylonian cultures using a sexagesimal numeral system had a arger number of denominators which would lead to terminal numbers.
+Unfortunately we use a decimal numeral system limiting the number possible of denominators which lead to terminal numbers; the ancient babylonian cultures using a sexagesimal numeral system had a larger number of denominators which would lead to terminal numbers.
 
-### Randomization - `exams2moodle_html`
+### Solution - `num_result`, `int_result`
 
-To avoid that the students all get the same exercises, we use the randomization the `exams` package offers by
+### Tables - `html_matrix_sk`
 
-```{r, eval=FALSE}
-res <- exams2html(exercisename, nsamp=21, encoding="UTF-8", name="single") # create HTML for reading
-exams2moodle_html(res, name="test.html")                                   # create HTML for exams result
-res <- exams2moodle(exercisename, nsamp=100, name="single")                # create XML for Moodle import
+Since creating tables for Moodle is still a pain, we used two approaches
+
+1. replace the table by an enumeration (see `as_string`, `as_obs`), or
+2. create a specific table for HTML (Moodle) and LaTeX (PDF).
+
+
+
+
+
+
+
+
+decided to replace a table with the $x$ values with
+a enumeration in LaTeX
+
+
+
+
+
+### Math formulas as LaTeX
+
+#### [`as_string`](../html/as_string.html)
+
+```{r}
+x <- round(runif(5), 2)
+as_string(x)
+as_string(x, collapse="+", last="+")
 ```
 
-In a first step we use `exams2html` to check the generated exercises. The `exams2...` return invisibly a list with all necessary informations about the generated exercises, e.g. true result, tolerance, solution text and so on.
-With the `exams2moodle_html` a part (or all) of this information is written to a HTML file for reading.
+#### [`as_obs`](../html/as_obs.html)
+```{r}
+x <- round(runif(5), 2)
+as_obs(x)
+as_obs(x, "y")
+as_obs(sort(x), "y", sorted=TRUE)
+```
 
-Finally `exams2moodle` a Moodle XML file is generated for the import to Moodle. 
+#### [`lsumprod`](../html/lsumprod.html)
+```{r}
+x <- round(2*runif(5)-1, 2)
+y <- round(2*runif(5)-1, 2)
+lsumprod(x,y)
+```
 
 ### Multiple stories
 
@@ -136,7 +265,7 @@ exname: `r if(exists("story")) story else knitr::current_input()`
 Note: if you copy the source before then you will find [a zero-width space after the first backticks](https://rmarkdown.rstudio.com/articles_verbatim.html) which will be visible in RStudio 
 and needs to be deleted.
 
-### Exercise identification - `now`
+### Task identification - `now`
 
 If we randomize the task and the stories then we may have a lot of different tasks. 
 If questions arise then we need to identify the exact task a student has.
@@ -148,96 +277,6 @@ substring(now(), 10)
 ```
 
 The `now` function uses `gsub('.', '', sprintf("%.20f", as.numeric(Sys.time())), fixed=TRUE)` and ensures that every time called a different number is returned. 
-
-## Tasks
-
-### Level or measurement - `to_choice`
-
-For determinng the correct level of measuremnt of a variable we use an Excel file with two columns with the name of the variable and the level of measurement.
-
-```{r, eval=FALSE}
-library("rio")
-vars   <- import("skaleniveau.xlsx")
-skalen <- c("nominal", "ordinal", "metrisch")
-stopifnot(all(vars[,2] %in% skalen)) # protect against typos
-skala  <- sample(skalen, 1)
-exvars <- sample(nrow(vars), 8)
-tf     <- (vars[exvars,2]==skala)
-sc     <- to_choice(vars[exvars,1], tf)
-sc$questions <- c(sc$questions, "Keine der Variablen hat das gewünschte Skalenniveau") # Additional answer
-sc$solutions <- c(sc$solutions, !any(tf))                                              # TRUE or FALSE?
-```
-
-The `to_choice` function generates a object such that can be used in `answerlist` and `mchoice2string`. The first parameter is either a vector or data frame. The second parameter is a logical vector containing `TRUE` if the element in the vector (or row in the data frame) contains a true answer. 
-
-The parameter `shuffle` samples from the correct and false answers. The following example could replace the main code from the example above.
-
-```{r, eval=FALSE}
-skalen <- c("nominal", "ordinal", "metrisch")
-skala  <- sample(skalen, 1)
-exvars <- sample(nrow(vars), 8)
-sc     <- to_choice(vars[exvars,1], vars[exvars,2]==skala, shuffle=c(1,8))
-```
-
-By default the answers are ordered, the parameter `order` which function is used to order the answers (default: `order`).
-
-### Find the correct mean - `means_choice`, `to_choice`
-
-`means_choice` computes a list of mean values for a given data vector `x`:
-
-* arithmetic mean,
-* median,
-* harmonic mean,
-* geometric mean,
-* (first) mode,
-* trimmed mean, and
-* winsorized mean.
-
-If the parameter `trim` and/or `winsor` set to `NA` then these means will not be computed.
-
-```{r}
-digits <- 2  # round to two digits
-repeat {
-  x  <- round(runif(7, min=165, max=195), digits)
-  ms <- means_choice(x, digits)         
-  if (attr(ms, "mindiff")>0.1) break   # make sure that all values are different by 0.1
-}
-ms <- unlist(ms)
-sc <- to_choice(ms, names(ms)=='mean') # arithmetic mean is the correct solution
-str(sc)
-```
-
-The attribute `mindiff` gives the minimal distance between two mean values. This might be important for setting  `extol` the tolerance for numeric solutions. 
-
-### Compute the arithmetic mean - `num_result`, `as_string`, `as_obs`
-
-For computing the arithmetic mean we just need to ensure that data are rounded to a certain level since the computation with pocket calculator is simple.
-
-```{r}
-library("exams2moodle")
-n    <- sample(4:8, size=1)
-x    <- round(runif(n, min=1.65, max=1.85), 2)
-sc   <- num_result (c(mean(x), x), digits = 2, tolmult = 2)
-```
-
-The function `num_result` creates a list with the elements
-
-* `x` the original values,
-* `fx` the rounded values with `fmt` function from the `exams` package as character,
-* `tolerance` the tolerance for `extol`, and
-* `digits` the digits used for rounding.
-
-The tolerance is computed as `tolmult*10^(-digits)`.
-
-Since creating tables for Moodle is still a pain, we decided to replace a table with the $x$ values with
-a enumeration in LaTeX
-
-```{r}
-as_string(x)
-as_obs(x)
-as_obs(x, "y")
-```
-
 
 
 
@@ -579,6 +618,26 @@ as_obs(x)
 as_obs(sort(x), name="y", sorted=TRUE)
 ```
 
+### `num_result`, `num2str`
+
+`num_result` creates a list with a solution `x`, a (rounded) text representation `fx`, and a `tolerance` for the result.
+
+```{r}
+str(num_result(pi, 3))
+str(num_result(pi, 6))
+str(num_result(pi, 6, tolmult=5))
+str(num_result(pi, 6, tolmult=5, tolerance=1e-6))
+```
+`num2str` computes a list of string representation of a numeric vector using `as.character`.
+
+```{r}
+x <- 1
+str(num2str(x))
+y <- 2
+str(num2str(x, y))
+str(num2str(x, y, z=c(x,y)))
+```
+
 ### `as_table`
 
 Converts a vector into a horizontal table. The parameters are the same as in `xtable` which is used internally. Intended for the use as (class) frequency table.
@@ -591,7 +650,7 @@ tab <- vec2mat(x, colnames=sprintf("%.0f-%0.f", 0:4, 1:5))
 as_table(tab)
 ```
 
-### `html_matrix`, `zebra`, `tooltip`, toHTML`
+### `html_matrix`, `zebra`, `tooltip`, `toHTML`
 
 Returns a HTML representation of a matrix as table. If you create exercises for Moodle then you can embed the HTML code in your exercise since it will be translated by `exams2moodle` to HTML, too. 
 
@@ -710,81 +769,6 @@ repeat {
 # show possible results for a MC questions
 sc$questions
 sc$solutions
-```
-
-### `pintegrate`
-
-`pintegrate` integrates about a finite interval a polynomial function multiplied with a power of `x`. The density is defined as
-
-$f(x) = \begin{cases} (c_q x^q + c_{q-1} x^{q-1} + \ldots + c_0) x^p dx & \text{ for } a\leq x\leq b\\
-                        0                                                & \text{ otherwise}\end{cases}$
-
-An example:
-
-```{r}
-# f(x)= x^2/4+x/6+10/12 for 0 <= x <= 1, 
-#              0        otherwise
-coeff <- c(1/4,1/6,10/12)
-res   <- pintegrate(coeff, c(0, 1), 0:2)
-# Is density?
-equal(res[1], 1)
-# expectation
-res[2]
-# variance
-res[3]-res[2]^2
-```
-
-### `vec2mat`
-
-Converts a vector to a row- or colum matrix.
-
-```{r}
-x <- runif(5)
-vec2mat(x)
-vec2mat(x, horizontal=FALSE)
-```
-
-## Accessing and modifying the XML file
-
-If you considering multple-choice questions then `exams2` package distinguishes between
-
-* `mchoice`: several correct answers with negative values for wrong answers, and
-* `schoice`: one correct answer.
-
-That for `mchoice` you get negative values for wrong answers is due to the fact that students should not get points
-if they just check all answers. However, if the student just checks wrong answers then he gets negative values for the exercise.
-Moodle would add the negative point to the whole exam. But in my place a student is not allowed to receive negative points for an exercise,
-the minimum is zero points.
-
-But Moodle supports another type of questions: several correct answers, but the student can choose just one answer. Unfortunately the 
-`exams2` package does not support this. So I decided to manipulate the XML file that `exams2moodle` generates with `moodle_m2s`.
-
-### `moodle_m2s`
-
-Create your exercise as normal `mchoice` exercise and create with `exams2moodle` the XML fiel for Moodle. 
-Then apply `moodle_m2s`to the XML file.
-
-```{r, eval=FALSE}
-exams2moodle(mymchoiceexer, name="mchoiceexer")
-moodle_m2s("mchoiceexer.xml", "mschoiceexer.xml") # write new XML file to mschoiceexer.xml
-moodle_m2s("mchoiceexer.xml")                     # overwrite mchoiceexer.xml with new XML code
-```
-
-`moodle_m2s` reads in the XML file and writes it back after:
-
-1. Changing every `<single>false</single>` to `<single>true</single>` and
-2. Setting positive fractions to `fraction="100"` and negativef ractions to `fraction="0"`.
-
-### Further XML commands
-
-* `moodle_xml2list` reads in a Moodle XML file and stores it in a list
-* `moodle_list2xml` writes a list from `moodle_xml2list` to a Moodle XML file
-* `moodle_fraction` allows to read and modify the fractions from all exercises
-* `moodle_fractions` returns a vector of all fractions which can be used in Moodle exercises
-* `moodle_text` allows to read and modify some `<text>...</text>` elements from exercises
-
-```{r}
-moodle_fractions()
 ```
 
 ## Recreate exercises in readable form from a JSON file

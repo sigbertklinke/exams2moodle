@@ -26,9 +26,15 @@ with \eqn{k\leq nmax}.
 If \code{zerosum} is true then it is ensured that \eqn{\sum_{i=1}^k c_i x_i = 0} with \eqn{c_i=-1} or \eqn{c_i=+1}.
 The computation of the \eqn{x_i}'s is limited by \code{maxt} seconds which may result that not all possible
 solutions are found. To reduce computing time, \code{rbind}'s in the function are replaced by allocating
-matrices with \code{size} rows to fill in the results. Note that data sets available: \code{sos100},
-\code{sos200=sumofsquares(100, 10, zerosum=TRUE, maxt=Inf)}, \code{sos400=sumofsquares(400, 10, zerosum=TRUE, maxt=Inf)},
-\code{sos800=sumofsquares(800, 10, zerosum=TRUE, maxt=Inf)}, and \code{sos1000=sumofsquares(100, 10, zerosum=TRUE, maxt=Inf)}
+matrices with \code{size} rows to fill in the results.
+Note that the following data sets are available:
+\itemize{
+\item \code{sos100=sumofsquares(100, 10, zerosum=TRUE, maxt=Inf)},
+\item \code{sos200=sumofsquares(200, 10, zerosum=TRUE, maxt=Inf)},
+\item \code{sos400=sumofsquares(400, 10, zerosum=TRUE, maxt=Inf)},
+\item \code{sos800=sumofsquares(800, 10, zerosum=TRUE, maxt=Inf)}, and
+\item \code{sos1000=sumofsquares(100, 10, zerosum=TRUE, maxt=Inf)}
+}
 }
 \examples{
 sos <- sumofsquares(100, 6) # 23 solutions

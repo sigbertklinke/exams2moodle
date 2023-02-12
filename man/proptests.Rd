@@ -24,12 +24,14 @@ Returned will be only the different tests with the first element is \code{propte
 is of interest then just give the name of the element in \code{elem} and then all \code{proptest}s will be returned where \code{elem} is different.
 }
 \details{
-The default \code{hyperloop} is\preformatted{list(x           = c(proptest$x, proptest$n-proptest$x)
+The default \code{hyperloop} is
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{list(x           = c(proptest$x, proptest$n-proptest$x)
      pi0         = c(proptest$pi0, 1-proptest$pi0, proptest$x/proptest$n, 1-proptest$x/proptest$n)
      alpha       = unique(c(proptest$alpha, 0.01, 0.05, 0.1)),
      alternative = c("two.sided", "greater", "less")
    )
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 basetest  <- proptest_num(x=3, n=8, alternative="greater")

@@ -37,16 +37,18 @@ histdata(x, breaks = "Sturges", probs = seq(0, 1, 0.25), ...)
 
 \item{probs}{numeric: probabilities to use if \code{breaks="Quantile"} (default: \code{seq(0, 1, 0.25)})}
 
-\item{...}{further parameter used in \code{\link[graphics:hist]{graphics::hist()}}}
+\item{...}{further parameter used in \link[graphics:hist]{graphics::hist}}
 }
 \value{
-like in \code{\link[graphics:hist]{graphics::hist()}} with the additional list elements
+like in \link[graphics:hist]{graphics::hist} with the additional list elements
 \itemize{
 \item \code{lower} lower class borders,
 \item \code{upper} upper class borders,
 \item \code{width} class widths,
 \item \code{relfreq} the relative class frequency,
-#'\code{cumfbrk} the cumulated relative frequency at the \code{breaks},
+\item \code{cumfbrk} the cumulated relative frequency at the \code{breaks},
+\item \code{maxdens} the indices of the maximal \code{density} values,
+\item \code{maxcount} the indices of the maximal \code{count} values
 \item \code{x} the original finite data, and
 \item \code{class} the class number for each value in \code{x}.
 }

@@ -24,7 +24,9 @@ Returned will be only the different t-tests with the first element is \code{ttes
 is of interest then just give the name of the element in \code{elem} and then all \code{ttest}s will be returned where \code{elem} is different.
 }
 \details{
-The default \code{hyperloop} is\preformatted{list(n           = c(1, ttest$n, ttest$n+1),
+The default \code{hyperloop} is
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{list(n           = c(1, ttest$n, ttest$n+1),
      mu0         = c(ttest$mu0, ttest$mean),
      mean        = c(ttest$mu0, ttest$mean), 
      sigma       = c(ttest$sigma, ttest$sd, sqrt(ttest$sigma), sqrt(ttest$sd)),
@@ -33,7 +35,7 @@ The default \code{hyperloop} is\preformatted{list(n           = c(1, ttest$n, tt
      alpha       = unique(c(ttest$alpha, 0.01, 0.05, 0.1)),
      alternative = c("two.sided", "greater", "less")
     )
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 basetest  <- ttest_num(mean=0.5, sd=1.25, n=50, sigma=1)

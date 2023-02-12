@@ -9,7 +9,8 @@ html_matrix_sk(
   title,
   fmt,
   byrow = TRUE,
-  tooltip = "Die Tabelle hat \%.0f Zeilen und \%.0f Spalten"
+  tooltip = "Die Tabelle hat \%.0f Zeilen und \%.0f Spalten",
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ html_matrix_sk(
 \item{byrow}{logical: \code{fmt} by row or by column (default: \code{TRUE})}
 
 \item{tooltip}{character: text for tooltip with column and row numbers (default: \code{"Die Tabelle hat \%.0f Zeilen und \%.0f Spalten"})}
+
+\item{...}{further parameters given to \code{html_matrix}}
 }
 \value{
 html_matrix object

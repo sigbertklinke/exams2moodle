@@ -15,6 +15,23 @@
 #' distributions
 "distributions"
 
+#' skalenniveau
+#'
+#' A data frame with the variables and level of measurement type. The names are in German.
+#'
+#' @docType data
+#'
+#' @usage data(skalenniveau)
+#'
+#' @format A data frame with columns \code{var}, and \code{type}
+#'
+#' @keywords datasets
+#'
+#' @examples
+#' data(skalenniveau)
+#' head(skalenniveau)
+"skalenniveau"
+
 #' @rdname sos
 #' @title Precomputed sum of squares data 
 #' @description

@@ -3,6 +3,7 @@
 \name{affix}
 \alias{affix}
 \alias{math}
+\alias{bracket}
 \alias{unaffix}
 \alias{unquote}
 \alias{uncdata}
@@ -12,6 +13,8 @@
 affix(txt, prefix = "", suffix = "")
 
 math(txt)
+
+bracket(txt)
 
 unaffix(txt, prefix = "", suffix = "")
 
@@ -35,6 +38,8 @@ character vector
 \code{affix} adds a prefix and/or suffix to a (character) vector.
 
 \code{math} adds a \code{$} as pre- and suffix to a (character) vector.
+
+\code{bracket} adds a \code{(} as prefix and \code{)} as suffix to a (character) vector.
 
 \code{unaffix} deletes a pre- and/or suffix to a (character) vector.
 

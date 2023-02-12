@@ -5,12 +5,13 @@
 #' given for `mean`, `sd` and `n` will be overwritten. Also either `sd` or `sigma` or both must be given. 
 #' * `x` sample (default: `numeric(0)`)
 #' * `mean` sample mean (default: `mean(x)`)
-#' * `n` sample size (default: `sd(x)`) 
-#' * `sd` sample standard deviation (default: `length(x)`)
+#' * `n` sample size (default: `length(x)`) 
+#' * `sd` sample standard deviation (default: `sd(x)`)
 #' * `sigma` population standard deviation (default: `NA` = unknown)
 #' * `mu0` true value of the mean (default: `0`)
 #' * `alternative` a string specifying the alternative hypothesis (default: `"two.sided"`), otherwise `"greater"` or `"less"` can be used
 #' * `alpha` significance level (default: `0.05`)
+#' * `norm` is population normal distributed  (default: `FALSE`)
 #' * `n.clt` when central limit theorem holds (default: `getOption("n.clt", 30)`)
 #' * `t2norm` does the approxmation \eqn{t_n \approx N(0;1)} hold? `(default: `NA` = use `t2norm` function)
 #' @param ...  named input parameters

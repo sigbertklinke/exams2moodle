@@ -17,8 +17,8 @@ grade(points, maxpts = max(points), fixed = TRUE)
 grades as function of points
 }
 \description{
-Computes a grade based on points to grade scheme by the Humboldt-Universität zu Berlin, see 
-§96c and §102 in the [Achte Änderung der Fächerübergreifenden Satzung zur Regelung von Zulassung, Studium und Prüfung der Humboldt-Universität zu Berlin (ZSP-HU)](https://gremien.hu-berlin.de/de/amb/2020/11/11_2020_zsp-hu_2013_ae08-2020_2020-05-29_druck.pdf#page=5)
+Computes a grade based on points to grade scheme by the Humboldt-Universität zu Berlin, see
+§96c and §102 in the \href{https://gremien.hu-berlin.de/de/amb/2020/11/11_2020_zsp-hu_2013_ae08-2020_2020-05-29_druck.pdf#page=5}{Achte Änderung der Fächerübergreifenden Satzung zur Regelung von Zulassung, Studium und Prüfung der Humboldt-Universität zu Berlin (ZSP-HU)}
 }
 \examples{
 x <- round(runif(100, 0, 22.4))
