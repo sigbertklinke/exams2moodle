@@ -1,0 +1,23 @@
+prob_solve("!A", "A"=0.3, quiet=FALSE, getprob=TRUE)
+prob_solve("!A|B", "A|B"=0.3, quiet=FALSE, getprob=TRUE)
+prob_solve("B^A", "A^B"=0.3, quiet=FALSE, getprob=TRUE)
+# P(B)   = P(A^B)+P(!A^B)
+prob_solve("B", "A^B"=0.3, "!A^B"= 0.4, quiet=FALSE, getprob=TRUE)
+prob_solve("A^B", "B"=0.7, "!A^B"= 0.4, quiet=FALSE, getprob=TRUE)
+prob_solve("!A^B", "B"=0.7, "A^B"= 0.3, quiet=FALSE, getprob=TRUE)
+# P(A|B) = P(A^B)/P(B)
+prob_solve("A|B", "A^B"=0.3, "B"= 0.6, quiet=FALSE, getprob=TRUE)
+prob_solve("A^B", "B"=0.6, "A|B"= 0.5, quiet=FALSE, getprob=TRUE)
+prob_solve("B", "A|B"=0.5, "A^B"= 0.3, quiet=FALSE, getprob=TRUE)
+# latex
+pmt <- prob_solve("M|T", "M"=0.6, "T|M"=0.75, "T|!M"=0.39, quiet=FALSE, getprob=TRUE)
+attr(pmt, "latex")
+pmt <- prob_solve("M|T", "M"=0.6, "T|M"=0.75, "T|!M"=0.39, quiet=FALSE, getprob=TRUE)
+attr(pmt, "prob")
+attr(pmt, "compute")
+# bayes theorem and total probability
+prob_solve("Z", "Z|A"=0.1, "Z|B"=0.2, "Z|C"=0.3, partition=c("A", "B", "C"), getprob=TRUE)
+prob_solve("Z|A", "Z"=0.6, "Z|B"=0.2, "Z|C"=0.3, partition=c("A", "B", "C"))
+prob_solve('A|K', "A"=0.55, "B"=0.35, "C"=0.1, "K|A"=0.4, "K|B"=0.1, "K|C"=0.1, partition=c("A", "B", "C"))
+prob_solve('K', "A"=0.55, "B"=0.35, "C"=0.1, "K|A"=0.4, "K|B"=0.1, "K|C"=0.1, partition=c("A", "B", "C"))
+

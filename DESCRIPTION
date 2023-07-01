@@ -12,6 +12,7 @@ Depends:
   tools,
   polynom
 Imports:
+  base64enc,
   extraDistr,
   exams,
   knitr,
@@ -21,11 +22,13 @@ Imports:
   psych,
   rjson,
   rmarkdown,
+  rstudioapi,
   spelling,
   stringdist,
   stringr,
   tinytex,
   utils,
+  xml2,
   xtable,
   yaml
 Encoding: UTF-8

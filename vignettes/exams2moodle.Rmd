@@ -22,7 +22,43 @@ knitr::opts_chunk$set(
 library("exams2moodle")
 ```
 
-## Example tasks
+## Data generating functions
+
+## Statistical functions
+
+### Univariate descriptive statistics
+
+### Bivariate descriptive statistics
+
+### Simple linear regression
+
+### Classical univariate times series
+
+### Probability theory
+
+#### Combinatorics
+
+#### Unconditional probabilities
+
+prob_
+
+#### Conditional probabilities
+
+prob_
+
+### Random variables
+
+rv_
+
+### Distributions
+
+### Tests
+
+test_
+
+### Confindence intervals
+
+ci_
 
 ### Introduction
 
@@ -186,19 +222,8 @@ Since creating tables for Moodle is still a pain, we used two approaches
 1. replace the table by an enumeration (see `as_string`, `as_obs`), or
 2. create a specific table for HTML (Moodle) and LaTeX (PDF).
 
-
-
-
-
-
-
-
 decided to replace a table with the $x$ values with
 a enumeration in LaTeX
-
-
-
-
 
 ### Math formulas as LaTeX
 
@@ -341,7 +366,7 @@ sd(y)
 then `x` is the number of elements. Otherwise `x` is considered as a starting distribution and length of `x` is the number of elements.
 
 The parameter `zero` determines if the final distribution can contain the probability entry zero or not. Since for computation of exercises
-based on a one-dimensional discrete probability distribution it favorably that the entries are fractions have the same denominator the paramter
+based on a one-dimensional discrete probability distribution it favorably that the entries are fractions have the same denominator the parameter
 `unit` can be used for this. Thus, if the smallest non-zero denominator should be `1/7` then use `unit=7`; the default is a power of 10.
 
 ```{r}
@@ -563,12 +588,19 @@ rug(x)
 ```
 
 
-### `combinatorics`
+### `combinatorics`, `permutation`, `variation`, and `combination`
 
 Computes all results for permutation, variation and combination with and without reptition.
 
 ```{r}
+variation(7,3)         # without replication
+variation(7,3, TRUE)   # with replication
+combination(7,3)       # without replication
+combination(7,3, TRUE) # with replication
+permutation(7)
+permutation(7, c(2,1,4)) # three groups with indistinguishable elements
 combinatorics(7, 3)
+
 ```
 
 The attribute `mindiff` gives the minimal distance between two values. 

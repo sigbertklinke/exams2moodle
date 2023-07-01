@@ -5,6 +5,9 @@
 \alias{variation}
 \alias{combination}
 \alias{permutation}
+\alias{lfact}
+\alias{lfactquot}
+\alias{lbinom}
 \title{Combinatorics}
 \usage{
 combinatorics(n, k)
@@ -14,6 +17,12 @@ variation(n, k, repl = FALSE)
 combination(n, k, repl = FALSE)
 
 permutation(n, k = rep(1, n))
+
+lfact(n)
+
+lfactquot(n, ...)
+
+lbinom(n, k)
 }
 \arguments{
 \item{n}{numeric: total number of elements}
@@ -21,6 +30,8 @@ permutation(n, k = rep(1, n))
 \item{k}{numeric: number of elements to choose}
 
 \item{repl}{logical: with reptition (default: \code{FALSE})}
+
+\item{...}{numeric: further arguments to \code{lfactquot}}
 }
 \value{
 a list
